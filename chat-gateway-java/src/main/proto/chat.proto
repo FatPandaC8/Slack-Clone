@@ -7,15 +7,31 @@ option java_multiple_files = true;
 
 service ChatService {
   rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
-  rpc CreateChannel (CreateChannelRequest) returns (CreateChannelResponse);
+  rpc CreateConversation (CreateConversationRequest) returns (CreateConversationResponse);
+  rpc GetConversation (GetConversationRequest) returns (GetConversationResponse);
 }
 
-message CreateChannelRequest {
+message GetConversationRequest {
+  string conversationId = 1;
+}
+
+message GetConversationResponse {
+  string conversationId = 1;
+  repeated ChatMessage messages = 2;
+}
+
+message ChatMessage {
+  string messageId = 1;
+  string senderId = 2;
+  string text = 3;
+}
+
+message CreateConversationRequest {
   string channelId = 1;
   repeated string memberIds = 2;
 }
 
-message CreateChannelResponse {
+message CreateConversationResponse {
   bool ok = 1;
   string error = 2;
 }

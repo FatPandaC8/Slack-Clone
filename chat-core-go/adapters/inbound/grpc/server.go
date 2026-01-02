@@ -12,16 +12,19 @@ import (
 type Server struct {
 	chatpb.UnimplementedChatServiceServer
 	sendMessage in.SendMessagePort
-	createChannel in.CreateChannelPort
+	createConversation in.CreateConversationPort
+	getConversation in.GetConversationPort
 }
 
 func NewServer(
 	sendMessage in.SendMessagePort,
-	createChannel in.CreateChannelPort,
+	createConversation in.CreateConversationPort,
+	getConversation in.GetConversationPort,
 ) *Server {
 	return &Server{
 		sendMessage:   sendMessage,
-		createChannel: createChannel,
+		createConversation: createConversation,
+		getConversation: getConversation,
 	}
 }
 
@@ -51,27 +54,51 @@ func (s *Server) SendMessage(
 	}, nil
 }
 
-func (s *Server) CreateChannel(
+func (s *Server) CreateConversation(
 	ctx context.Context,
-	req *chatpb.CreateChannelRequest,
-) (*chatpb.CreateChannelResponse, error) {
+	req *chatpb.CreateConversationRequest,
+) (*chatpb.CreateConversationResponse, error) {
 	
 	var members []user.ID
 	for _, id := range req.GetMemberIds() {
 		members = append(members, user.ID(id))
 	}
 
-	err := s.createChannel.Execute(dto.CreateChannelCommand{
+	err := s.createConversation.Execute(dto.CreateChannelCommand{
 		ChannelID: req.GetChannelId(),
 		Members:   members,
 	})
 
 	if err != nil {
-		return &chatpb.CreateChannelResponse{
+		return &chatpb.CreateConversationResponse{
 			Ok:    false,
 			Error: err.Error(),
 		}, nil
 	}
 
-	return &chatpb.CreateChannelResponse{Ok: true}, nil
+	return &chatpb.CreateConversationResponse{Ok: true}, nil
+}
+
+func (s *Server) GetConversation(
+	ctx context.Context,
+	req *chatpb.GetConversationRequest,
+) (*chatpb.GetConversationResponse, error) {
+	conv, err := s.getConversation.Execute(req.GetConversationId())
+	if err != nil {
+		return nil, err
+	}
+
+	res := &chatpb.GetConversationResponse{
+		ConversationId: string(conv.ID()),
+	}
+
+	for _, msg := range conv.Messages() {
+		res.Messages = append(res.Messages, &chatpb.ChatMessage{
+			MessageId: string(msg.ID()),
+			SenderId: string(msg.Sender()),
+			Text: msg.Content().Value(),
+		})
+	}
+
+	return res, nil
 }

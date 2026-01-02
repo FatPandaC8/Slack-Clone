@@ -14,6 +14,10 @@ func WireSendMessage() *usecase.SendMessage {
 	return usecase.NewSendMessage(conversationRepo, messageRepo, pub)
 }
 
-func WireCreateChannel() *usecase.CreateChannel {
+func WireCreateConversation() *usecase.CreateConversation {
 	return usecase.NewCreateChannel(conversationRepo)
+}
+
+func WireGetConversation() *usecase.GetConversation {
+	return usecase.NewGetConversation(conversationRepo)
 }

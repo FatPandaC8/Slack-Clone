@@ -28,7 +28,7 @@ func (uc *SendMessage) Execute(cmd dto.SendMessageCommand) error {
 		return err
 	}
 
-	if !conv.CanSend(cmd.SenderID) {
+	if !conv.IsMember(cmd.SenderID) {
 		return errors.New("permission denied")
 	}
 

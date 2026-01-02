@@ -1,12 +1,15 @@
 package com.example.chat.infra.grpc;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
 import com.example.chat.grpc.ChatServiceGrpc;
-import com.example.chat.grpc.CreateChannelRequest;
-import com.example.chat.grpc.CreateChannelResponse;
+import com.example.chat.grpc.CreateConversationRequest;
+import com.example.chat.grpc.CreateConversationResponse;
+import com.example.chat.grpc.GetConversationRequest;
+import com.example.chat.grpc.GetConversationResponse;
 import com.example.chat.grpc.SendMessageRequest;
 import com.example.chat.grpc.SendMessageResponse;
 
@@ -45,16 +48,36 @@ public class ChatGrpcClient {
         }
     }
 
-    public void createChannel(String channelId, List<String> members) {
-        CreateChannelRequest req = CreateChannelRequest.newBuilder()
+    public void createConversation(String channelId, List<String> members) {
+        CreateConversationRequest req = CreateConversationRequest.newBuilder()
                                                         .setChannelId(channelId)
                                                         .addAllMemberIds(members)
                                                         .build();
         
-        CreateChannelResponse res = stub.createChannel(req);
+        CreateConversationResponse res = stub.createConversation(req);
         
         if (!res.getOk()) {
             throw new RuntimeException(res.getError());
         }
+    }
+
+    public ConversationView getConversation(String conversationId) {
+        GetConversationRequest req = GetConversationRequest.newBuilder()
+                                                            .setConversationId(conversationId)
+                                                            .build();
+
+        GetConversationResponse res = stub.getConversation(req);
+        
+        List<MessageView> messageViews = res.getMessagesList()
+                                            .stream()
+                                            .map(
+                                                m -> new MessageView(
+                                                m.getMessageId(),
+                                                m.getSenderId(),
+                                                m.getText()
+                                            ))
+                                            .collect(Collectors.toList());
+
+        return new ConversationView(res.getConversationId(), messageViews);
     }
 }
