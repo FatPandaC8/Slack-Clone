@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "chat-core-go/adapters/inbound/chat-proto;chatproto";
+
+service ChatService {
+  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+  rpc CreateChannel (CreateChannelRequest) returns (CreateChannelResponse);
+}
+
+message CreateChannelRequest {
+  string channelId = 1;
+  repeated string memberIds = 2;
+}
+
+message CreateChannelResponse {
+  bool ok = 1;
+  string error = 2;
+}
+
+message SendMessageRequest {
+  string messageId = 1;
+  string conversationId = 2;
+  string senderId = 3;
+  string text = 4;
+}
+
+message SendMessageResponse {
+  bool ok = 1;
+  string error = 2;
+}
