@@ -3,7 +3,7 @@ package com.example.chat.web;
 import java.util.List;
 
 public record CreateConversationHttpRequest(
-    String channelId,
+    String conversationId,
     List<String> memberIds
 ) {
     

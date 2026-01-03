@@ -15,7 +15,7 @@ func WireSendMessage() *usecase.SendMessage {
 }
 
 func WireCreateConversation() *usecase.CreateConversation {
-	return usecase.NewCreateChannel(conversationRepo)
+	return usecase.NewCreateConversation(conversationRepo)
 }
 
 func WireGetConversation() *usecase.GetConversation {

@@ -10,15 +10,15 @@ type CreateConversation struct {
 	conversations out.ConversationRepository
 }
 
-func NewCreateChannel(
+func NewCreateConversation(
 	conversations out.ConversationRepository,
 ) *CreateConversation {
 	return &CreateConversation{conversations: conversations}
 }
 
-func (uc *CreateConversation) Execute(cmd dto.CreateChannelCommand) error {
+func (uc *CreateConversation) Execute(cmd dto.CreateConversationCommand) error {
 	conv, err := conversation.NewConversation(
-		conversation.ID(cmd.ChannelID),
+		conversation.ID(cmd.ConversationID),
 		cmd.Members,
 	)
 	if err != nil {

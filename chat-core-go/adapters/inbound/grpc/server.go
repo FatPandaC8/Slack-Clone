@@ -64,8 +64,8 @@ func (s *Server) CreateConversation(
 		members = append(members, user.ID(id))
 	}
 
-	err := s.createConversation.Execute(dto.CreateChannelCommand{
-		ChannelID: req.GetChannelId(),
+	err := s.createConversation.Execute(dto.CreateConversationCommand{
+		ConversationID: req.GetChannelId(),
 		Members:   members,
 	})
 
