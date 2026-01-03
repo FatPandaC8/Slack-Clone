@@ -6,29 +6,38 @@
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
-<h2>Choose User</h2>
-<input id="userId" placeholder="your user id"/>
-<button onclick="setUser()">Set User</button>
+<div class="app">
+  <aside class="sidebar">
+    <h3>User</h3>
+    <input id="userId" placeholder="your user id"/>
+    <button onclick="setUser()">Set User</button>
 
-<hr>
+    <hr>
 
-<h2>My Conversation</h2>
-<div id="conversationList"></div>
-<hr>
+    <h3>Conversation</h3>
+    <div id="conversationList" class="conversation-list"></div>
 
-<h2>Create Conversation</h2>
+    <hr>
 
-<input id="conversationId" placeholder="conversation id">
-<input id="memberIds" placeholder="members (comma separated)">
-<button onclick="createConversation()">Create</button>
+    <h3>Create</h3>
+    
+    <input id="conversationId" placeholder="conversation id">
+    <input id="memberIds" placeholder="members (comma separated)">
+    <button onclick="createConversation()">Create</button>
+  </aside>
 
-<hr>
+  <main class="chat">
+    <div class="chat-header"> 
+      Conversation
+    </div>
+    <div id="messages" class="messages"></div>
 
-<h2>Conversation</h2>
-<div id="messages"></div>
-
-<input id="text" placeholder="message">
-<button onclick="send()">Send</button>
+    <div class="composer">
+      <input id="text" placeholder="Type a message"/>
+      <button onclick="send()">Send</button>
+    </div>
+  </main>
+</div>
 
 <script src="/js/app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
