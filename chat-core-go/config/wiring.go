@@ -21,3 +21,7 @@ func WireCreateConversation() *usecase.CreateConversation {
 func WireGetConversation() *usecase.GetConversation {
 	return usecase.NewGetConversation(conversationRepo)
 }
+
+func WireListConversations() *usecase.ListConversations {
+	return usecase.NewListConversations(conversationRepo)
+}

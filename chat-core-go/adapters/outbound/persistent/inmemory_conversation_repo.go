@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"chat-core-go/domain/conversation"
+	"chat-core-go/domain/user"
 )
 
 type InMemoryConversationRepo struct {
@@ -29,4 +30,14 @@ func (r *InMemoryConversationRepo) Load(id string) (*conversation.Conversation, 
 func (r *InMemoryConversationRepo) Save(conv *conversation.Conversation) error {
 	r.store[string(conv.ID())] = conv
 	return nil
+}
+
+func (r *InMemoryConversationRepo) FindByMember(uid user.ID) ([]conversation.Conversation, error) {
+	var result []conversation.Conversation
+	for _, conv := range r.store {
+		if conv.IsMember(uid) {
+			result = append(result, *conv)
+		}
+	}
+	return result, nil
 }

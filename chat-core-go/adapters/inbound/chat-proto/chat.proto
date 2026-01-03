@@ -8,8 +8,10 @@ service ChatService {
   rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
   rpc CreateConversation (CreateConversationRequest) returns (CreateConversationResponse);
   rpc GetConversation (GetConversationRequest) returns (GetConversationResponse);
+  rpc ListConversations (ListConversationsRequest) returns (ListConversationsResponse);
 }
 
+// GET CONVERSATIONS
 message GetConversationRequest {
   string conversationId = 1;
 }
@@ -25,6 +27,7 @@ message ChatMessage {
   string text = 3;
 }
 
+// CREATE CONVERSATIONS
 message CreateConversationRequest {
   string conversationId = 1;
   repeated string memberIds = 2;
@@ -35,6 +38,7 @@ message CreateConversationResponse {
   string error = 2;
 }
 
+// SEND MESSAGES 
 message SendMessageRequest {
   string messageId = 1;
   string conversationId = 2;
@@ -45,4 +49,13 @@ message SendMessageRequest {
 message SendMessageResponse {
   bool ok = 1;
   string error = 2;
+}
+
+// LIST CONVERSATIONS
+message ListConversationsRequest {
+  string userId = 1;
+}
+
+message ListConversationsResponse {
+  repeated string conversationId = 1;
 }

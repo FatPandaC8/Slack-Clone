@@ -1,5 +1,14 @@
 let currentConversationId = null;
-const senderId = "user-1";
+let currentUserId = null;
+
+async function setUser() {
+  const uid = document.getElementById("userId").value.trim();
+  if (!uid) return alert("userId required");
+
+  currentUserId = uid;
+  alert(`You're: ${uid}`)
+  loadMyConversations();
+}
 
 async function createConversation() {
   const conversationId = document.getElementById("conversationId").value;
@@ -19,6 +28,8 @@ async function createConversation() {
   });
 
   currentConversationId = conversationId;
+  alert(`conversation: ${conversationId} created successfully`);
+  loadMyConversations();
   loadConversation();
 }
 
@@ -49,11 +60,29 @@ async function send() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      senderId: senderId,
+      senderId: currentUserId,
       text: text
     })
   });
 
   document.getElementById("text").value = "";
   loadConversation();
+}
+
+async function loadMyConversations() {
+  const res = await fetch(`/users/${currentUserId}/conversations`);
+  const convs = await res.json();
+
+  const list = document.getElementById("conversationList");
+  list.innerHTML = ""
+
+  convs.forEach(id => {
+    const btn = document.createElement("button");
+    btn.innerText = id;
+    btn.onclick = () => {
+      currentConversationId = id;
+      loadConversation();
+    };
+    list.appendChild(btn);
+  });
 }

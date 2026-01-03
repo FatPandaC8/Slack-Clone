@@ -10,6 +10,8 @@ import com.example.chat.grpc.CreateConversationRequest;
 import com.example.chat.grpc.CreateConversationResponse;
 import com.example.chat.grpc.GetConversationRequest;
 import com.example.chat.grpc.GetConversationResponse;
+import com.example.chat.grpc.ListConversationsRequest;
+import com.example.chat.grpc.ListConversationsResponse;
 import com.example.chat.grpc.SendMessageRequest;
 import com.example.chat.grpc.SendMessageResponse;
 
@@ -48,9 +50,9 @@ public class ChatGrpcClient {
         }
     }
 
-    public void createConversation(String channelId, List<String> members) {
+    public void createConversation(String conversationId, List<String> members) {
         CreateConversationRequest req = CreateConversationRequest.newBuilder()
-                                                        .setChannelId(channelId)
+                                                        .setConversationId(conversationId)
                                                         .addAllMemberIds(members)
                                                         .build();
         
@@ -79,5 +81,15 @@ public class ChatGrpcClient {
                                             .collect(Collectors.toList());
 
         return new ConversationView(res.getConversationId(), messageViews);
+    }
+
+    public List<String> listConversationsIds(String userId) {
+        ListConversationsRequest req = ListConversationsRequest.newBuilder()
+                                                                .setUserId(userId)
+                                                                .build();
+
+        ListConversationsResponse res = stub.listConversations(req);
+        
+        return res.getConversationIdList();
     }
 }

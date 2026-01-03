@@ -14,17 +14,20 @@ type Server struct {
 	sendMessage in.SendMessagePort
 	createConversation in.CreateConversationPort
 	getConversation in.GetConversationPort
+	listConversations in.ListConversationPort
 }
 
 func NewServer(
 	sendMessage in.SendMessagePort,
 	createConversation in.CreateConversationPort,
 	getConversation in.GetConversationPort,
+	listConversations in.ListConversationPort,
 ) *Server {
 	return &Server{
 		sendMessage:   sendMessage,
 		createConversation: createConversation,
 		getConversation: getConversation,
+		listConversations: listConversations,
 	}
 }
 
@@ -65,7 +68,7 @@ func (s *Server) CreateConversation(
 	}
 
 	err := s.createConversation.Execute(dto.CreateConversationCommand{
-		ConversationID: req.GetChannelId(),
+		ConversationID: req.GetConversationId(),
 		Members:   members,
 	})
 
@@ -98,6 +101,26 @@ func (s *Server) GetConversation(
 			SenderId: string(msg.Sender()),
 			Text: msg.Content().Value(),
 		})
+	}
+
+	return res, nil
+}
+
+func (s *Server) ListConversations(
+	ctx context.Context, 
+	req *chatpb.ListConversationsRequest,
+) (*chatpb.ListConversationsResponse, error) {
+	convs, err := s.listConversations.Execute(user.ID(req.GetUserId()))
+	if err != nil {
+		return nil, err
+	}
+
+	res := &chatpb.ListConversationsResponse{}
+	for _, c := range convs {
+		res.ConversationId = append(
+			res.ConversationId, 
+			string(c.ID()),
+		)
 	}
 
 	return res, nil
