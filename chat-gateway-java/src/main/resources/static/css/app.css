@@ -17,12 +17,14 @@ body {
 /* LEFT SIDEBAR */
 .sidebar {
   width: 260px;
-  background: #3f0e40;
+  background: #191970; /* MIDNIGHT BLUE */
   color: white;
   padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex-shrink: 0;
+  height: 100%;
 }
 
 .sidebar h3 {
@@ -39,7 +41,7 @@ body {
 
 .sidebar button {
   padding: 6px;
-  background: #611f69;
+  background: #4169E1;
   color: white;
   border: none;
   border-radius: 4px;
@@ -49,6 +51,26 @@ body {
 .conversation-list {
   flex: 1;
   overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  min-height: 50px;
+  padding: 6px;
+}
+
+.conversation-list button {
+  display: block;
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 4px;
+  border: none;
+  border-radius: 4px;
+  background: #4169E1; /* or lighter blue */
+  color: white;
+  cursor: pointer;
+  text-align: left;
+}
+.conversation-list button:hover {
+  background: #6495ED;
 }
 
 /* CHAT AREA */
@@ -57,6 +79,7 @@ body {
   display: flex;
   flex-direction: column;
   background: white;
+  min-height: 0;
 }
 
 .chat-header {
@@ -70,6 +93,7 @@ body {
   padding: 12px;
   overflow-y: auto;
   background: #fafafa;
+  min-height: 100px;
 }
 
 .msg {
