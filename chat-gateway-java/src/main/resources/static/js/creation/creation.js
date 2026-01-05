@@ -1,6 +1,6 @@
 import { loadConversation } from "../conversation/loadConversation.js";
-import {loadMyConversations} from "../conversation/loadMyConversation.js";
-import {connectWS} from "../websocket/websocket.js";
+import { loadMyConversations } from "../conversation/loadMyConversation.js";
+import { connectWS } from "../websocket/websocket.js";
 
 export let currentUserId = null;
 export let currentConversationId = null;
@@ -9,7 +9,7 @@ export async function setUser(userIdInput) {
   const uid = userIdInput.value.trim();
   if (!uid) return alert("userId required");
 
-  currentUserId = uid;
+  setCurrentUserId(uid);
   alert(`You're: ${uid}`)
   connectWS();
   loadMyConversations();
@@ -32,7 +32,7 @@ export async function createConversation(convIdInput, memberIdsInput) {
     })
   });
 
-  currentConversationId = conversationId;
+  setCurrentConversationId(conversationId);
   alert(`conversation: ${conversationId} created successfully`);
   loadMyConversations();
   loadConversation();

@@ -127,3 +127,31 @@ body {
   border-radius: 6px;
   cursor: pointer;
 }
+
+.typing-indicator {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  color: #666;
+  background: #f2f2f2;
+  padding: 6px 10px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dots::after {
+  content: "";
+  animation: dots 1.5s steps(3, end) infinite;
+}
+
+@keyframes dots {
+  0%    {content: "";}
+  33%   {content: ".";}
+  66%   {content: "..";}
+  100%  {content: "...";}
+}
+
+.hidden {
+  display: none;
+}

@@ -1,4 +1,4 @@
-import { currentConversationId } from "../creation/creation.js";
+import { setCurrentConversationId } from "../creation/creation.js";
 
 export async function loadConversation(conversationId) {
   if (!conversationId) return;
@@ -17,5 +17,5 @@ export async function loadConversation(conversationId) {
   });
   
   // Update the global
-  currentConversationId = conversationId;
+  setCurrentConversationId(conversationId);
 }

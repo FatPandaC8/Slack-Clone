@@ -15,3 +15,8 @@ Tips: Always check the inspect for network => check status code -> can resend if
 A: Today I separate the js files into their respective folders => need to import with the extension of .js & export needed functions
    Or else, the file will return 404
 BUGS: cannot see the new messages 
+
+(05/01/2026)
+FIXED invisible messages: Lost import
+Now new bug: TypeError: conversationId is read-only => fixed by using a helper setter
+New UI bugs: the new messages are not aligned but it's fixed after a web restart
