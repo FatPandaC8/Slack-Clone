@@ -1,6 +1,6 @@
 import { currentUserId, setCurrentConversationId } from "../creation/creation.js";
 import { loadConversation } from "./loadConversation.js";
-import { subscribeConversation } from "../websocket/websocket.js";
+import { subscribeConversation, subscribeTyping } from "../websocket/websocket.js";
 
 export async function loadMyConversations() {
   const res = await fetch(`/users/${currentUserId}/conversations`);
@@ -15,6 +15,7 @@ export async function loadMyConversations() {
     btn.onclick = () => {
       setCurrentConversationId(id);
       loadConversation(id);
+      subscribeTyping(id);
       subscribeConversation(id);
     };
     list.appendChild(btn);

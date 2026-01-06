@@ -1,13 +1,31 @@
+import { updateTypingUI } from "../message/typing-indicator.js";
+
 let stompClient = null;
 let currentSubscription = null;
+let currentTypingSub = null;
 
 export function connectWS() {
   const socket = new SockJS("/ws");
   stompClient = Stomp.over(socket);
 
-  stompClient.connect({}, () => {
-    console.log("WS connected");
+  return new Promise((resolve) => {
+    stompClient.connect(
+      {}, () => {
+        console.log("WS connected");
+        resolve();
+      }
+    );
   });
+}
+
+export function sendWS(destination, payload) {
+  if (!stompClient) return;
+
+  stompClient.send(
+    destination,
+    {},
+    JSON.stringify(payload)
+  );
 }
 
 export function subscribeConversation(conversationId) {
@@ -20,6 +38,20 @@ export function subscribeConversation(conversationId) {
     (msg) => {
       const message = JSON.parse(msg.body);
       appendMessage(message);
+    }
+  );
+}
+
+export function subscribeTyping(conversationId) {
+  if (currentTypingSub) {
+    currentTypingSub.unsubscribe();
+  }
+
+  currentTypingSub = stompClient.subscribe(
+    `/topic/conversations/${conversationId}/typing`,
+    (msg) => {
+      const data = JSON.parse(msg.body);
+      updateTypingUI([...data.usersTyping]);
     }
   );
 }

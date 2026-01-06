@@ -1,4 +1,4 @@
-package com.example.chat.web;
+package com.example.chat.web.dto;
 
 public record SendMessageHttpRequest(
     String conversationId,

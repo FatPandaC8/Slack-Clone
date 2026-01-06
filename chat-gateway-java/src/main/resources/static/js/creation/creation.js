@@ -11,7 +11,7 @@ export async function setUser(userIdInput) {
 
   setCurrentUserId(uid);
   alert(`You're: ${uid}`)
-  connectWS();
+  await connectWS();
   loadMyConversations();
 }
 

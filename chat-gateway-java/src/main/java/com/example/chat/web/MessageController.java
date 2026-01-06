@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.chat.application.SendMessageService;
 import com.example.chat.infra.grpc.MessageView;
+import com.example.chat.web.dto.SendMessageHttpRequest;
 
 @RestController
 @RequestMapping("/conversations/{conversationId}/messages")

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.chat.infra.grpc.ChatGrpcClient;
 import com.example.chat.infra.grpc.ConversationView;
+import com.example.chat.web.dto.CreateConversationHttpRequest;
 
 @RestController
 @RequestMapping("/conversations")
