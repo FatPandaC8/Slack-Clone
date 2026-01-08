@@ -3,10 +3,8 @@
 }
 
 body {
-  background: red;
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  /* background: #f8f8f8; */
 }
 
 .app {
@@ -17,18 +15,17 @@ body {
 /* LEFT SIDEBAR */
 .sidebar {
   width: 260px;
-  background: #002855; /* MIDNIGHT BLUE */
+  background: #002855;
   color: white;
-  padding: 12px;
+  padding: 16px;
+
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex-shrink: 0;
-  height: 100%;
 }
 
 .sidebar h3 {
-  font-size: 14px;
+  font-size: 16px;
   margin: 8px 0;
   opacity: 0.9;
 }
@@ -37,14 +34,16 @@ body {
   padding: 6px;
   border-radius: 4px;
   border: none;
+  outline: none;
 }
 
 .sidebar button {
-  padding: 6px;
+  margin-top: 4px;
+  padding: 6px 10px;
   background: #0353a4;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -79,13 +78,14 @@ body {
   display: flex;
   flex-direction: column;
   background: white;
-  min-height: 0;
 }
 
 .chat-header {
-  padding: 12px;
+  padding: 14px 18px;
   border-bottom: 1px solid #ddd;
-  font-weight: bold;
+  font-weight: 600;
+  background: #f8fafc;
+  font-size: 16px;
 }
 
 .messages {
@@ -93,14 +93,13 @@ body {
   padding: 12px;
   overflow-y: auto;
   background: #fafafa;
-  min-height: 100px;
 }
 
 .msg {
-  margin-bottom: 8px;
-  padding: 6px 8px;
   background: white;
+  padding: 6px 8px;
   border-radius: 6px;
+  margin-bottom: 8px;
   max-width: 70%;
 }
 
@@ -132,6 +131,13 @@ body {
 .composer-toolbar {
   margin-top: 6px;
 
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.left-toolbar {
   display: flex;
   gap: 6px;
   align-items: center;

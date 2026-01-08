@@ -13,12 +13,8 @@
     <input id="userId" placeholder="Your user id"/>
     <button id="setUserBtn">Set User</button>
 
-    <hr>
-
-    <h3>Conversation</h3>
+    <h3>Conversation</h3> <!--Dynamically change this based on the current conversationId-->
     <div id="conversationList" class="conversation-list"></div>
-
-    <hr>
 
     <h3>Create</h3>
     
@@ -43,18 +39,20 @@
       <textarea id="textInput" placeholder="Type a message"></textarea>
 
       <div class="composer-toolbar">
-        <button id="sendFileBtn" class="icon-btn" title="Attach">
-          <i class="bi bi-plus-circle"></i>
-        </button>
-
-        <button id="calloutBtn" class="icon-btn" title="Callout">
-          <i class="bi bi-at"></i>
-        </button>
-
-        <button id="sendVoiceBtn" class="icon-btn" title="Voice">
-          <i class="bi bi-mic"></i>
-        </button>
-
+        <div class="left-toolbar">
+          <button id="sendFileBtn" class="icon-btn" title="Attach">
+            <i class="bi bi-plus-circle"></i>
+          </button>
+          
+          <button id="calloutBtn" class="icon-btn" title="Callout">
+            <i class="bi bi-at"></i>
+          </button>
+          
+          <button id="sendVoiceBtn" class="icon-btn" title="Voice">
+            <i class="bi bi-mic"></i>
+          </button>
+        </div>
+        
         <button id="sendMessageBtn" class="icon-btn" title="Send">
           <i class="bi bi-send-fill"></i>
         </button>
