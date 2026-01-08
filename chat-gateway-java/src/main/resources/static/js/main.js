@@ -7,7 +7,7 @@ import { sendTyping } from "./message/typing-sender.js";
 const userIdInput           = document.getElementById("userId");
 const convIdInput           = document.getElementById("conversationId");
 const memberIdsInput        = document.getElementById("memberIds");
-const textInput             = document.getElementById("text");
+const textInput             = document.getElementById("textInput");
 const typingIndicator       = document.getElementById("typingIndicator");
 const typingText            = document.getElementById("typingText");
 
@@ -20,13 +20,17 @@ initTypingIndicator({
 // Buttons
 const setUserBtn            = document.getElementById("setUserBtn");
 const createConvBtn         = document.getElementById("createConvBtn");
-const sendBtn               = document.getElementById("sendBtn");
+const sendMessageBtn        = document.getElementById("sendMessageBtn");
 
 // Event listeners
 setUserBtn.addEventListener("click",    () => setUser(userIdInput));
 createConvBtn.addEventListener("click", () => createConversation(convIdInput, memberIdsInput));
-sendBtn.addEventListener("click",       () => send(textInput));
-textInput.addEventListener("input",     () => sendTyping(currentConversationId, currentUserId));
+sendMessageBtn.addEventListener("click",       () => send(textInput));
+textInput.addEventListener("input",     () => {
+    sendTyping(currentConversationId, currentUserId);
+    textInput.style.height = "auto";
+    textInput.style.height = textInput.scrollHeight + "px";
+});
 
 // Enter key for sending
 textInput.addEventListener("keydown", (event) => {

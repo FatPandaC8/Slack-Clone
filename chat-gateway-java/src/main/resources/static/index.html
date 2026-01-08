@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Mini Slack</title>
-  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="./css/app.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 <body>
 <div class="app">
   <aside class="sidebar">
     <h3>User</h3>
-    <input id="userId" placeholder="your user id"/>
+    <input id="userId" placeholder="Your user id"/>
     <button id="setUserBtn">Set User</button>
 
     <hr>
@@ -21,8 +22,8 @@
 
     <h3>Create</h3>
     
-    <input id="conversationId" placeholder="conversation id">
-    <input id="memberIds" placeholder="members (comma separated)">
+    <input id="conversationId" placeholder="Conversation id">
+    <input id="memberIds" placeholder="Members (comma separated)">
     <button id="createConvBtn">Create</button>
   </aside>
 
@@ -37,9 +38,27 @@
       <span class="name" id="typingText"></span>
       <span class="dots"></span>
     </div>
+    
     <div class="composer">
-      <input id="text" placeholder="Type a message"/>
-      <button id="sendBtn">Send</button>
+      <textarea id="textInput" placeholder="Type a message"></textarea>
+
+      <div class="composer-toolbar">
+        <button id="sendFileBtn" class="icon-btn" title="Attach">
+          <i class="bi bi-plus-circle"></i>
+        </button>
+
+        <button id="calloutBtn" class="icon-btn" title="Callout">
+          <i class="bi bi-at"></i>
+        </button>
+
+        <button id="sendVoiceBtn" class="icon-btn" title="Voice">
+          <i class="bi bi-mic"></i>
+        </button>
+
+        <button id="sendMessageBtn" class="icon-btn" title="Send">
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </div>
     </div>
   </main>
 </div>
