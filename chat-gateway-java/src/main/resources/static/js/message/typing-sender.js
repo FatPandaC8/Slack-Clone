@@ -20,5 +20,5 @@ export function sendTyping(conversationId, userId) {
         userId
         });
         isTyping = false;
-    }, 2000);
+    }, 1000);
 }

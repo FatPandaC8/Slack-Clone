@@ -20,5 +20,11 @@ BUGS: cannot see the new messages
 [UI - FIXED]            Invisible messages <= Lost import
 [Logic - FIXED]         TypeError: conversationId is read-only => fixed by using a helper setter
 [UI - ONGOING]          The new messages are not aligned but it's fixed after a web restart
-[Logic - ONGOING]       send a request to java that a person is typing, then after a 2 second interval, send a not typing request
+[Logic - FIXED]         Send a request to java that a person is typing, then after a 2 second interval, send a not typing request
                         The one keeping track of all the users typing is in the java
+                        Done: use a single flag to reduce 95% of sending request.
+
+(08/01/2026)
+[Logic - FIXED]       At runtime, loadConversation create new msg element, but real time, it does not have any css applied to it.
+                        Websocket was the one changing the content without applying the css => reuse the same renderMessage func from 
+                        loadConversation.js

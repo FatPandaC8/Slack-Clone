@@ -1,3 +1,4 @@
+import { renderMessage } from "../conversation/loadConversation.js";
 import { updateTypingUI } from "../message/typing-indicator.js";
 
 let stompClient = null;
@@ -58,7 +59,5 @@ export function subscribeTyping(conversationId) {
 
 function appendMessage(msg) {
   const box = document.getElementById("messages");
-  const div = document.createElement("div");
-  div.innerText = `${msg.senderId}: ${msg.text}`;
-  box.appendChild(div);
+  box.appendChild(renderMessage(msg.senderId, msg.text));
 }
