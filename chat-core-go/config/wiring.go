@@ -1,7 +1,7 @@
 package config
 
 import (
-	"chat-core-go/adapters/outbound/persistent"
+	"chat-core-go/adapters/outbound/persistent/inmemory"
 	"chat-core-go/adapters/outbound/publisher"
 	"chat-core-go/application/usecase"
 )

@@ -2,15 +2,17 @@ package conversation
 
 import (
 	"errors"
+	"time"
 
 	"chat-core-go/domain/message"
 	"chat-core-go/domain/user"
 )
 
 type Conversation struct {
-	id      ID
-	members map[user.ID]bool
-	messages []message.Message
+	id      	ID
+	members 	map[user.ID]bool
+	messagesIds []message.ID
+	createdAt 	time.Time
 }
 
 func NewConversation(id ID, members []user.ID) (*Conversation, error) {
@@ -26,7 +28,8 @@ func NewConversation(id ID, members []user.ID) (*Conversation, error) {
 	return &Conversation{
 		id: id,
 		members: m,
-		messages: []message.Message{},
+		messagesIds: []message.ID{},
+		createdAt: time.Now(),
 	}, nil
 }
 
@@ -38,14 +41,26 @@ func (c *Conversation) IsMember(u user.ID) bool {
 	return c.members[u]
 }
 
+func (c *Conversation) CreatedAt() time.Time {
+	return c.createdAt
+}
+
 func (c *Conversation) AddMessage(msg message.Message) error {
 	if !c.IsMember(msg.Sender()) {
 		return errors.New("sender is not a member")
 	}
-	c.messages = append(c.messages, msg)
+	c.messagesIds = append(c.messagesIds, msg.ID())
 	return nil
 }
 
-func (c *Conversation) Messages() []message.Message {
-	return c.messages
+func (c *Conversation) MessagesIDs() []message.ID {
+	return c.messagesIds
+}
+
+func (c *Conversation) MembersList() []user.ID {
+	list := make([]user.ID, 0, len(c.members))
+	for uid := range c.members {
+		list = append(list, uid)
+	}
+	return list
 }

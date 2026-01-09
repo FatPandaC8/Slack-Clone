@@ -31,3 +31,5 @@ BUGS: cannot see the new messages
 
 [UI - ONGOING]          Right now, the sidebar is jamming with user creation, conversation creation and conversation list => reduce UX 
                         flow => MAKE IT SEPARATE LIKE SLACK DOES.
+
+                        chatapp - superchatapp

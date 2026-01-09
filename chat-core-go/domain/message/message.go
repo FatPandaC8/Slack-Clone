@@ -1,12 +1,16 @@
 package message
 
-import "chat-core-go/domain/user"
+import (
+	"chat-core-go/domain/user"
+	"time"
+)
 
 type Message struct {
 	id 				ID
 	sender 			user.ID
 	conversationID	string
 	content 		Content
+	createdAt 		time.Time
 }
 
 func NewMessage(
