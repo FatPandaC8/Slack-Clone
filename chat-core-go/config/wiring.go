@@ -8,6 +8,7 @@ import (
 
 var conversationRepo = persistent.NewInMemoryConversationRepo()
 var messageRepo = persistent.NewInMemoryMessageRepo()
+var userRepo = persistent.NewInmemoryUserRepo()
 
 func WireSendMessage() *usecase.SendMessage {
 	pub := &publisher.LogPublisher{}
@@ -19,9 +20,17 @@ func WireCreateConversation() *usecase.CreateConversation {
 }
 
 func WireGetConversation() *usecase.GetConversation {
-	return usecase.NewGetConversation(conversationRepo)
+	return usecase.NewGetConversation(conversationRepo, messageRepo, userRepo)
 }
 
 func WireListConversations() *usecase.ListConversations {
 	return usecase.NewListConversations(conversationRepo)
+}
+
+func WireCreateUser() *usecase.CreateUser {
+	return usecase.NewCreateUser(userRepo)
+}
+
+func WireListUsers() *usecase.ListUsers {
+	
 }

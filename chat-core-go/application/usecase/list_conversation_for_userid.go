@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"chat-core-go/domain/conversation"
-	"chat-core-go/domain/user"
 	"chat-core-go/ports/out"
 )
 
@@ -16,6 +15,6 @@ func NewListConversations(r out.ConversationRepository) *ListConversations {
 	}
 }
 
-func (uc *ListConversations) Execute(uid user.ID) ([]conversation.Conversation, error) {
+func (uc *ListConversations) Execute(uid string) ([]conversation.Conversation, error) {
 	return uc.repo.FindByMember(uid)
 }

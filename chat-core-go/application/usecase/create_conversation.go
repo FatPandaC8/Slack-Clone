@@ -18,7 +18,7 @@ func NewCreateConversation(
 
 func (uc *CreateConversation) Execute(cmd dto.CreateConversationCommand) error {
 	conv, err := conversation.NewConversation(
-		conversation.ID(cmd.ConversationID),
+		cmd.ConversationID,
 		cmd.Members,
 	)
 	if err != nil {

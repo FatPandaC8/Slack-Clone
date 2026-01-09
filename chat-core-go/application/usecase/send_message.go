@@ -33,7 +33,7 @@ func (uc *SendMessage) Execute(cmd dto.SendMessageCommand) error {
 	}
 
 	msg := message.NewMessage(
-		message.NewID(cmd.MessageID),
+		cmd.MessageID,
 		cmd.SenderID,
 		cmd.ConversationID,
 		message.NewContent(cmd.Text),

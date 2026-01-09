@@ -1,21 +1,20 @@
 package message
 
 import (
-	"chat-core-go/domain/user"
 	"time"
 )
 
 type Message struct {
-	id 				ID
-	sender 			user.ID
+	id 				string
+	sender 			string
 	conversationID	string
 	content 		Content
 	createdAt 		time.Time
 }
 
 func NewMessage(
-	id ID,
-	sender user.ID,
+	id string,
+	sender string,
 	conversationID string,
 	content Content,
 ) Message {
@@ -27,7 +26,8 @@ func NewMessage(
 	}
 }
 
-func (m Message) ID() ID                { return m.id }
-func (m Message) Sender() user.ID       { return m.sender }
-func (m Message) ConversationID() string { return m.conversationID }
-func (m Message) Content() Content      { return m.content }
+func (m Message) ID() string                { return m.id }
+func (m Message) Sender() string       		{ return m.sender }
+func (m Message) ConversationID() string 	{ return m.conversationID }
+func (m Message) Content() Content      	{ return m.content }
+func (m Message) CreatedAt() time.Time 		{ return m.createdAt }

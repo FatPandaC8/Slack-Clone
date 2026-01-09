@@ -5,22 +5,21 @@ import (
 	"time"
 
 	"chat-core-go/domain/message"
-	"chat-core-go/domain/user"
 )
 
 type Conversation struct {
-	id      	ID
-	members 	map[user.ID]bool
-	messagesIds []message.ID
+	id      	string
+	members 	map[string]bool
+	messagesIds []string
 	createdAt 	time.Time
 }
 
-func NewConversation(id ID, members []user.ID) (*Conversation, error) {
+func NewConversation(id string, members []string) (*Conversation, error) {
 	if len(members) < 2 {
 		return nil, errors.New("conversation must have at least 2 members")
 	}
 
-	m := make(map[user.ID]bool)
+	m := make(map[string]bool)
 	for _, u := range members {
 		m[u] = true
 	}
@@ -28,16 +27,16 @@ func NewConversation(id ID, members []user.ID) (*Conversation, error) {
 	return &Conversation{
 		id: id,
 		members: m,
-		messagesIds: []message.ID{},
+		messagesIds: []string{},
 		createdAt: time.Now(),
 	}, nil
 }
 
-func (c *Conversation) ID() ID {
+func (c *Conversation) ID() string {
 	return c.id
 }
 
-func (c *Conversation) IsMember(u user.ID) bool {
+func (c *Conversation) IsMember(u string) bool {
 	return c.members[u]
 }
 
@@ -53,12 +52,12 @@ func (c *Conversation) AddMessage(msg message.Message) error {
 	return nil
 }
 
-func (c *Conversation) MessagesIDs() []message.ID {
+func (c *Conversation) MessagesIDs() []string {
 	return c.messagesIds
 }
 
-func (c *Conversation) MembersList() []user.ID {
-	list := make([]user.ID, 0, len(c.members))
+func (c *Conversation) MembersList() []string {
+	list := make([]string, 0, len(c.members))
 	for uid := range c.members {
 		list = append(list, uid)
 	}
