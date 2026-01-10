@@ -16,6 +16,7 @@ type Server struct {
 	listConversations  in.ListConversationPort
 	createUser         in.CreateUserPort
 	listUser           in.ListUserPort
+	joinConversation   in.JoinConversationPort
 }
 
 func NewServer(
@@ -25,6 +26,7 @@ func NewServer(
 	listConversations in.ListConversationPort,
 	createUser in.CreateUserPort,
 	listUser in.ListUserPort,
+	joinConversation in.JoinConversationPort,
 ) *Server {
 	return &Server{
 		sendMessage:        sendMessage,
@@ -33,6 +35,7 @@ func NewServer(
 		listConversations:  listConversations,
 		createUser:         createUser,
 		listUser:           listUser,
+		joinConversation: joinConversation,
 	}
 }
 
@@ -113,12 +116,10 @@ func (s *Server) CreateConversation(
 	req *chatpb.CreateConversationRequest,
 ) (*chatpb.CreateConversationResponse, error) {
 
-	cmd := dto.CreateConversationCommand{
-		ConversationID: req.GetConversationId(),
-		Members:        req.GetMemberIds(),
-	}
-
-	err := s.createConversation.Execute(cmd)
+	result, err := s.createConversation.Execute(dto.CreateConversationCommand{
+		Name: req.GetName(),
+		CreatorID: req.GetCreatorId(),
+	})
 	if err != nil {
 		return &chatpb.CreateConversationResponse{
 			Ok:    false,
@@ -128,12 +129,34 @@ func (s *Server) CreateConversation(
 
 	res := &chatpb.CreateConversationResponse{
 		Ok:             true,
-		ConversationId: cmd.ConversationID,
-		Members:        []*chatpb.ChatUser{},
+		ConversationId: result.ID,
+		InviteCode: result.InviteCode,
+		Name: result.Name,
 	}
 
 	return res, nil
 }
+
+func (s *Server) JoinConversation(ctx context.Context, req *chatpb.JoinConversationRequest) (
+    *chatpb.JoinConversationResponse, error) {
+
+    err := s.joinConversation.Execute(dto.JoinConversationCommand{
+        InviteCode: req.GetInviteCode(),
+        UserID: req.GetUserId(),
+    })
+
+    if err != nil {
+        return &chatpb.JoinConversationResponse{
+            Ok: false,
+            Error: err.Error(),
+        }, nil
+    }
+
+    return &chatpb.JoinConversationResponse{
+        Ok: true,
+    }, nil
+}
+
 
 func (s *Server) GetConversation(
 	ctx context.Context,
@@ -179,9 +202,12 @@ func (s *Server) ListConversations(
 
 	res := &chatpb.ListConversationsResponse{}
 	for _, c := range convs {
-		res.ConversationId = append(
-			res.ConversationId,
-			string(c.ID()),
+		res.Conversations = append(
+			res.Conversations,
+			&chatpb.ConversationView{
+				ConversationId: c.ID(),
+				Name: c.Name(),
+			},
 		)
 	}
 

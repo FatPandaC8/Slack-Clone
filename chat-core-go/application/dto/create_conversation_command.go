@@ -6,7 +6,13 @@ import (
 
 // DTOs are for changing state, write; queries on the other hand does not need DTO
 type CreateConversationCommand struct {
-	ConversationID 		string
-	Members  			[]string
+	Name 				string
+	CreatorID 			string
 	CreatedAt 			time.Time
+}
+
+type CreateConversationDTO struct {
+	ID 					string
+	InviteCode 			string
+	Name 				string
 }

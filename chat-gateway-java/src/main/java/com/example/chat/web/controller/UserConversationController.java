@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.chat.infra.grpc.ChatGrpcClient;
+import com.example.chat.web.dto.ListPerUserConversationView;
 
 @RestController
 public class UserConversationController {
@@ -17,7 +18,7 @@ public class UserConversationController {
     }
 
     @GetMapping("/users/{userId}/conversations")
-    public List<String> myConversations(@PathVariable String userId) {
-        return grpcClient.listConversationsIds(userId);
+    public List<ListPerUserConversationView> myConversations(@PathVariable String userId) {
+        return grpcClient.listConversations(userId);
     }
 }

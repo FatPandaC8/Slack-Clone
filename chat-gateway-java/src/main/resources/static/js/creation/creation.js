@@ -5,12 +5,12 @@ import { connectWS } from "../websocket/websocket.js";
 export let currentUserId = null;
 export let currentConversationId = null;
 
-function getCurrentUser() {
-  return JSON.parse(localStorage.getItem("currentUser"));
-}
-
 function setCurrentUser(user) {
   localStorage.setItem("currentUser", JSON.stringify(user));
+}
+
+function getCurrentUser() {
+    return JSON.parse(localStorage.getItem("currentUser"));
 }
 
 export async function createUser(name, email, password) {
@@ -25,30 +25,35 @@ export async function createUser(name, email, password) {
   const data = await res.json();
 
   setCurrentUser(data);
+  currentUserId = data.id;
   await connectWS();
   loadMyConversations();
   return data;
 }
 
-export async function createConversation(convIdInput, memberIdsInput) {
-  const conversationId = convIdInput.value.trim();
-  const members = memberIdsInput.value
-                                .split(",")
-                                .map(s => s.trim());
+export async function createConversation(convNameInput) {
+  const name = convNameInput.value.trim();
 
-  if (!conversationId) return alert("conversationId required");
+  if (!name) {
+    alert("Conversation name required");
+    return;
+  }
 
-  await fetch("/conversations", {
+  const res = await fetch("/conversations", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      conversationId: conversationId,
-      memberIds: members
+    body: JSON.stringify({ 
+      name: name,
+      creatorId: currentUserId
     })
   });
 
-  setCurrentConversationId(conversationId);
-  alert(`conversation: ${conversationId} created successfully`);
+  const data = await res.json();
+
+  setCurrentConversationId(data.id);
+
+  alert(`Conversation "${data.name}" created.\nInvite code: ${data.inviteCode}`);
+
   loadMyConversations();
   loadConversation();
 }

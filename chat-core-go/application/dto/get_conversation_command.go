@@ -1,6 +1,6 @@
 package dto
 
-type ConversationDTO struct {
+type GetConversationDTO struct {
 	ID       string
 	Members  []UserDTO
 	Messages []MessageDTO

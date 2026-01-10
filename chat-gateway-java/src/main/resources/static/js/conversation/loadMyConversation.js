@@ -1,6 +1,6 @@
 import { currentUserId, setCurrentConversationId } from "../creation/creation.js";
-import { loadConversation } from "./loadConversation.js";
 import { subscribeConversation, subscribeTyping } from "../websocket/websocket.js";
+import { loadConversation } from "./loadConversation.js";
 
 export async function loadMyConversations() {
   const res = await fetch(`/users/${currentUserId}/conversations`);

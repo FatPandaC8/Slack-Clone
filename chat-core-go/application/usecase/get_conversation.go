@@ -24,14 +24,14 @@ func NewGetConversation(
 	}
 }
 
-func (uc *GetConversation) Execute(id string) (*dto.ConversationDTO, error) {
+func (uc *GetConversation) Execute(id string) (*dto.GetConversationDTO, error) {
 	conv, err := uc.conversations.Load(id)
 	if err != nil {
 		return nil, err
 	}
 
 	var messages []dto.MessageDTO
-	for _, msgID := range conv.MessagesIDs() {
+	for _, msgID := range conv.MessageIDs() {
 		msg, err := uc.messages.Load(msgID)
 		if err != nil {
 			continue // skip error messages
@@ -45,7 +45,7 @@ func (uc *GetConversation) Execute(id string) (*dto.ConversationDTO, error) {
 	}
 
 	var members []dto.UserDTO
-	for _, uid := range conv.MembersList() {
+	for _, uid := range conv.Members() {
 		userObj, err := uc.users.Load(uid)
 		if err != nil {
 			members = append(members, dto.UserDTO{ID: uid})
@@ -57,7 +57,7 @@ func (uc *GetConversation) Execute(id string) (*dto.ConversationDTO, error) {
 		})
 	}
 
-	return &dto.ConversationDTO{
+	return &dto.GetConversationDTO{
 		ID:       conv.ID(),
 		Members:  members,
 		Messages: messages,

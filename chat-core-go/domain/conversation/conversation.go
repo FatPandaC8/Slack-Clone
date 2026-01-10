@@ -1,65 +1,61 @@
 package conversation
 
 import (
-	"errors"
 	"time"
-
-	"chat-core-go/domain/message"
 )
 
 type Conversation struct {
 	id      	string
-	members 	map[string]bool
+	name 		string
+	inviteCode  string
+	members 	[]string
 	messagesIds []string
-	createdAt 	time.Time
+	createdAt 	time.Time // for other kind of plugins if i like
 }
 
-func NewConversation(id string, members []string) (*Conversation, error) {
-	if len(members) < 2 {
-		return nil, errors.New("conversation must have at least 2 members")
-	}
-
-	m := make(map[string]bool)
-	for _, u := range members {
-		m[u] = true
-	}
-
+func NewConversation(id, name, inviteCode, creatorID string) (*Conversation, error) {
 	return &Conversation{
 		id: id,
-		members: m,
+		name: name,
+		inviteCode: inviteCode,
+		members: []string{creatorID},
 		messagesIds: []string{},
 		createdAt: time.Now(),
 	}, nil
 }
 
-func (c *Conversation) ID() string {
-	return c.id
+func (c *Conversation) ID() string            { return c.id }
+func (c *Conversation) Name() string          { return c.name }
+func (c *Conversation) InviteCode() string    { return c.inviteCode }
+func (c *Conversation) Members() []string     { return c.members }
+func (c *Conversation) MessageIDs() []string  { return c.messagesIds }
+
+func (c *Conversation) AddMember(uid string) {
+    // avoid duplicates
+    for _, m := range c.members {
+        if m == uid {
+            return
+        }
+    }
+    c.members = append(c.members, uid)
 }
 
-func (c *Conversation) IsMember(u string) bool {
-	return c.members[u]
-}
-
-func (c *Conversation) CreatedAt() time.Time {
-	return c.createdAt
-}
-
-func (c *Conversation) AddMessage(msg message.Message) error {
-	if !c.IsMember(msg.Sender()) {
-		return errors.New("sender is not a member")
+func (c *Conversation) HasMember(uid string) bool {
+	for _, m := range c.members {
+		if m == uid {
+			return true
+		}
 	}
-	c.messagesIds = append(c.messagesIds, msg.ID())
-	return nil
+	return false
 }
 
-func (c *Conversation) MessagesIDs() []string {
-	return c.messagesIds
-}
-
-func (c *Conversation) MembersList() []string {
-	list := make([]string, 0, len(c.members))
-	for uid := range c.members {
-		list = append(list, uid)
+func (c *Conversation) AddMessageID(mid string) {
+	// avoid duplicates just in case
+	for _, id := range c.messagesIds {
+		if id == mid {
+			return
+		}
 	}
-	return list
+
+	c.messagesIds = append(c.messagesIds, mid)
 }

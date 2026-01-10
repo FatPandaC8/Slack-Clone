@@ -16,18 +16,22 @@
     <input id="password" placeholder="password" type="password">
     <button id="createUserBtn">Create User</button>
 
-    <h3>Conversation</h3> <!--Dynamically change this based on the current conversationId-->
+    <h3>Conversation</h3> 
     <div id="conversationList" class="conversation-list"></div>
 
-    <h3>Create</h3>
+    <h3>Join Conversation</h3>
     
-    <input id="conversationId" placeholder="Conversation id">
-    <input id="memberIds" placeholder="Members (comma separated)">
-    <button id="createConvBtn">Create</button>
+    <input id="inviteCodeInput" placeholder="Invite Code">
+    <button id="joinConvBtn">Join</button>
+
+    <h3>Create Conversation</h3>
+
+    <input id="createConvInput" placeholder="Name">
+    <button id="createConvBtn">Create Conversation</button>
   </aside>
 
   <main class="chat">
-    <div class="chat-header"> 
+    <div id="chatHeader" class="chat-header"> 
       Conversation
     </div>
     <div id="messages" class="messages"></div>

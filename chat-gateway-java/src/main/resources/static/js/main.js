@@ -1,15 +1,15 @@
 import { createConversation, currentUserId, currentConversationId, createUser } from "./creation/creation.js";
-import { send } from "./message/send.js";
 import { initTypingIndicator } from "./message/typing-indicator.js";
+import { joinConversation } from "./conversation/joinConversation.js";
 import { sendTyping } from "./message/typing-sender.js";
+import { send } from "./message/send.js";
 
 // Grab inputs once
-const userIdInput           = document.getElementById("userId");
-const convIdInput           = document.getElementById("conversationId");
-const memberIdsInput        = document.getElementById("memberIds");
+const convNameInput         = document.getElementById("createConvInput");
 const textInput             = document.getElementById("textInput");
 const typingIndicator       = document.getElementById("typingIndicator");
 const typingText            = document.getElementById("typingText");
+const inviteCodeInput       = document.getElementById("inviteCodeInput");
 
 // Init
 initTypingIndicator({
@@ -24,6 +24,7 @@ const emailInput            = document.getElementById("email");
 const passwordInput         = document.getElementById("password");
 const createConvBtn         = document.getElementById("createConvBtn");
 const sendMessageBtn        = document.getElementById("sendMessageBtn");
+const joinBtn               = document.getElementById("joinConvBtn");
 
 // Event listeners
 createUserBtn.addEventListener("click", async () => {
@@ -33,10 +34,14 @@ createUserBtn.addEventListener("click", async () => {
         passwordInput.value
     );
 
-    alert("Logged in as " + user.name + "with id of " + user.id);
+    alert("Logged in as " + user.name + " with id of " + user.id);
 });
-createConvBtn.addEventListener("click", () => createConversation(convIdInput, memberIdsInput));
+createConvBtn.addEventListener("click", () => createConversation(convNameInput));
+
 sendMessageBtn.addEventListener("click",       () => send(textInput));
+
+joinBtn.addEventListener("click", async () => joinConversation(inviteCodeInput));
+
 textInput.addEventListener("input",     () => {
     sendTyping(currentConversationId, currentUserId);
     textInput.style.height = "auto";

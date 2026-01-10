@@ -9,14 +9,16 @@ import (
 )
 
 type InMemoryConversationRepo struct {
-	store map[string]*conversation.Conversation
+	storeID map[string]*conversation.Conversation
+	storeCode map[string]*conversation.Conversation
 	mu sync.Mutex
 	counter int
 }
 
 func NewInMemoryConversationRepo() *InMemoryConversationRepo {
 	return &InMemoryConversationRepo{
-		store: make(map[string]*conversation.Conversation),
+		storeID: make(map[string]*conversation.Conversation),
+		storeCode: make(map[string]*conversation.Conversation),
 	}
 }
 
@@ -32,7 +34,7 @@ func (r *InMemoryConversationRepo) Load(id string) (*conversation.Conversation, 
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	conv, ok := r.store[id]
+	conv, ok := r.storeID[id]
 	if !ok {
 		return nil, errors.New("conversation not found")
 	}
@@ -45,7 +47,8 @@ func (r *InMemoryConversationRepo) Save(conv *conversation.Conversation) error {
 	if conv == nil {
 		return errors.New("conversation is null")
 	}
-	r.store[conv.ID()] = conv
+	r.storeID[conv.ID()] = conv
+	r.storeCode[conv.InviteCode()] = conv
 	return nil
 }
 
@@ -53,10 +56,21 @@ func (r *InMemoryConversationRepo) FindByMember(uid string) ([]conversation.Conv
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	var result []conversation.Conversation
-	for _, conv := range r.store {
-		if conv.IsMember(uid) {
+	for _, conv := range r.storeID {
+		if conv.HasMember(uid) {
 			result = append(result, *conv)
 		}
 	}
 	return result, nil
+}
+
+func (r *InMemoryConversationRepo) FindByInviteCode(code string) (*conversation.Conversation, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	conv, ok := r.storeCode[code]
+	if !ok {
+		return nil, errors.New("conversation not found")
+	}
+	return conv, nil
 }

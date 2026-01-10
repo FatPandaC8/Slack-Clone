@@ -13,6 +13,7 @@ service ChatService {
   rpc CreateConversation (CreateConversationRequest) returns (CreateConversationResponse);
   rpc GetConversation (GetConversationRequest) returns (GetConversationResponse);
   rpc ListConversations (ListConversationsRequest) returns (ListConversationsResponse);
+  rpc JoinConversation (JoinConversationRequest) returns (JoinConversationResponse);
 
   // Users
   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
@@ -65,15 +66,27 @@ message ChatMessage {
 }
 
 message CreateConversationRequest {
-  string conversationId = 1; // optional, can be empty and generated server-side
-  repeated string memberIds = 2;
+  string name = 1;
+  string creatorId = 2;
 }
 
 message CreateConversationResponse {
   bool ok = 1;
   string error = 2;
   string conversationId = 3;
-  repeated ChatUser members = 4;
+  string inviteCode = 4;
+  string name = 5;
+}
+
+message JoinConversationRequest {
+  string inviteCode = 1;
+  string userId = 2;
+}
+
+message JoinConversationResponse {
+  bool ok = 1;
+  string conversationId = 2;
+  string error = 3;
 }
 
 // ---------------------- Sending Messages ----------------------
@@ -92,10 +105,15 @@ message SendMessageResponse {
 }
 
 // ---------------------- Listing Conversations ----------------------
+message ConversationView {
+  string conversation_id = 1;
+  string name = 2;
+}
+
 message ListConversationsRequest {
   string userId = 1;
 }
 
 message ListConversationsResponse {
-  repeated string conversationId = 1;
+  repeated ConversationView conversations = 1;
 }

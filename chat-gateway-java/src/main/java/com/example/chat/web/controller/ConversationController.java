@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.chat.infra.grpc.ChatGrpcClient;
 import com.example.chat.infra.grpc.ConversationView;
 import com.example.chat.web.dto.CreateConversationHttpRequest;
+import com.example.chat.web.dto.CreateConversationResponseView;
+import com.example.chat.web.dto.JoinConversationHttpRequest;
 
 @RestController
 @RequestMapping("/conversations")
@@ -24,9 +26,14 @@ public class ConversationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ConversationView create(@RequestBody CreateConversationHttpRequest req) {
-        grpcClient.createConversation(req.conversationId(), req.memberIds());
-        return grpcClient.getConversation(req.conversationId());
+    public CreateConversationResponseView create(@RequestBody CreateConversationHttpRequest req) {
+        return grpcClient.createConversation(req.name(), req.creatorId());
+    }
+
+    @PostMapping("/join")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void join(@RequestBody JoinConversationHttpRequest req) {
+        grpcClient.joinConversation(req.inviteCode(), req.userId());
     }
 
     @GetMapping("/{conversationId}")

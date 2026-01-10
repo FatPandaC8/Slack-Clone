@@ -35,3 +35,7 @@ func WireListUsers() *usecase.ListUsers {
 	return usecase.NewListUsers(userRepo)
 }
 
+func WireJoinConversation() *usecase.JoinConversation {
+	return usecase.NewJoinConversation(conversationRepo)
+}
+

@@ -5,5 +5,5 @@ import (
 )
 
 type GetConversationPort interface {
-	Execute(conversationID string) (*dto.ConversationDTO, error)
+	Execute(conversationID string) (*dto.GetConversationDTO, error)
 }

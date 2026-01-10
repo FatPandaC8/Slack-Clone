@@ -28,7 +28,7 @@ func (uc *SendMessage) Execute(cmd dto.SendMessageCommand) error {
 		return err
 	}
 
-	if !conv.IsMember(cmd.SenderID) {
+	if !conv.HasMember(cmd.SenderID) {
 		return errors.New("permission denied")
 	}
 
@@ -39,7 +39,7 @@ func (uc *SendMessage) Execute(cmd dto.SendMessageCommand) error {
 		message.NewContent(cmd.Text),
 	)
 
-	conv.AddMessage(msg)
+	conv.AddMessageID(msg.ID())
 	uc.messages.Save(msg)
 	uc.publisher.Publish(msg)
 

@@ -12,13 +12,17 @@ import com.example.chat.grpc.CreateUserRequest;
 import com.example.chat.grpc.CreateUserResponse;
 import com.example.chat.grpc.GetConversationRequest;
 import com.example.chat.grpc.GetConversationResponse;
+import com.example.chat.grpc.JoinConversationRequest;
+import com.example.chat.grpc.JoinConversationResponse;
 import com.example.chat.grpc.ListConversationsRequest;
 import com.example.chat.grpc.ListConversationsResponse;
 import com.example.chat.grpc.ListUserRequest;
 import com.example.chat.grpc.ListUserResponse;
 import com.example.chat.grpc.SendMessageRequest;
 import com.example.chat.grpc.SendMessageResponse;
+import com.example.chat.web.dto.CreateConversationResponseView;
 import com.example.chat.web.dto.CreateUserResponseView;
+import com.example.chat.web.dto.ListPerUserConversationView;
 import com.example.chat.web.dto.UserView;
 
 import io.grpc.ManagedChannel;
@@ -56,10 +60,10 @@ public class ChatGrpcClient {
         }
     }
 
-    public void createConversation(String conversationId, List<String> members) {
+    public CreateConversationResponseView createConversation(String name, String creatorId) {
         CreateConversationRequest req = CreateConversationRequest.newBuilder()
-                                                        .setConversationId(conversationId)
-                                                        .addAllMemberIds(members)
+                                                        .setName(name)
+                                                        .setCreatorId(creatorId)
                                                         .build();
         
         CreateConversationResponse res = stub.createConversation(req);
@@ -67,6 +71,12 @@ public class ChatGrpcClient {
         if (!res.getOk()) {
             throw new RuntimeException(res.getError());
         }
+
+        return new CreateConversationResponseView(
+            res.getConversationId(),
+            res.getName(),
+            res.getInviteCode()
+        );
     }
 
     public ConversationView getConversation(String conversationId) {
@@ -89,14 +99,20 @@ public class ChatGrpcClient {
         return new ConversationView(res.getConversationId(), messageViews);
     }
 
-    public List<String> listConversationsIds(String userId) {
+    public List<ListPerUserConversationView> listConversations(String userId) {
         ListConversationsRequest req = ListConversationsRequest.newBuilder()
                                                                 .setUserId(userId)
                                                                 .build();
 
         ListConversationsResponse res = stub.listConversations(req);
         
-        return res.getConversationIdList();
+        return res.getConversationsList()
+                                .stream()
+                                .map(c -> new ListPerUserConversationView(
+                                        c.getConversationId(),
+                                        c.getName()
+                                ))
+                                .collect(Collectors.toList());
     }
 
     public CreateUserResponseView createUser(String name, String email, String password) {
@@ -128,5 +144,18 @@ public class ChatGrpcClient {
                         .stream()
                         .map(u -> new UserView(u.getUserId(), u.getName()))
                         .collect(Collectors.toList());
+    }
+
+    public void joinConversation(String inviteCode, String userId) {
+        JoinConversationRequest req = JoinConversationRequest.newBuilder()
+                                                            .setInviteCode(inviteCode)
+                                                            .setUserId(userId)
+                                                            .build();
+
+        JoinConversationResponse res = stub.joinConversation(req);
+
+        if (!res.getOk()) {
+            throw new RuntimeException(res.getError());
+        }
     }
 }

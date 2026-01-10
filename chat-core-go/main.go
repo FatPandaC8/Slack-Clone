@@ -18,6 +18,7 @@ func main() {
 	listConversationsUC := config.WireListConversations()
 	createUserUC := config.WireCreateUser()
 	listUserUC := config.WireListUsers()
+	joinConversationUC := config.WireJoinConversation()
 
 	grpcServer := grpc.NewServer()
 
@@ -28,6 +29,7 @@ func main() {
 		listConversationsUC,
 		createUserUC,
 		listUserUC,
+		joinConversationUC,
 	)
 
 	chatpb.RegisterChatServiceServer(grpcServer, chatServer)
