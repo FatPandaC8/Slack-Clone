@@ -1,4 +1,4 @@
-import { setUser, createConversation, currentUserId, currentConversationId } from "./creation/creation.js";
+import { createConversation, currentUserId, currentConversationId, createUser } from "./creation/creation.js";
 import { send } from "./message/send.js";
 import { initTypingIndicator } from "./message/typing-indicator.js";
 import { sendTyping } from "./message/typing-sender.js";
@@ -18,12 +18,23 @@ initTypingIndicator({
 });
 
 // Buttons
-const setUserBtn            = document.getElementById("setUserBtn");
+const createUserBtn         = document.getElementById("createUserBtn");
+const nameInput             = document.getElementById("name");
+const emailInput            = document.getElementById("email");
+const passwordInput         = document.getElementById("password");
 const createConvBtn         = document.getElementById("createConvBtn");
 const sendMessageBtn        = document.getElementById("sendMessageBtn");
 
 // Event listeners
-setUserBtn.addEventListener("click",    () => setUser(userIdInput));
+createUserBtn.addEventListener("click", async () => {
+    const user = await createUser(
+        nameInput.value,
+        emailInput.value,
+        passwordInput.value
+    );
+
+    alert("Logged in as " + user.name + "with id of " + user.id);
+});
 createConvBtn.addEventListener("click", () => createConversation(convIdInput, memberIdsInput));
 sendMessageBtn.addEventListener("click",       () => send(textInput));
 textInput.addEventListener("input",     () => {

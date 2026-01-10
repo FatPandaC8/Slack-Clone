@@ -2,16 +2,19 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Mini Slack</title>
+  <title>Prototype A0</title>
   <link rel="stylesheet" href="./css/app.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 <body>
 <div class="app">
   <aside class="sidebar">
-    <h3>User</h3>
-    <input id="userId" placeholder="Your user id"/>
-    <button id="setUserBtn">Set User</button>
+    <h3>Create User</h3>
+
+    <input id="name" placeholder="name">
+    <input id="email" placeholder="email">
+    <input id="password" placeholder="password" type="password">
+    <button id="createUserBtn">Create User</button>
 
     <h3>Conversation</h3> <!--Dynamically change this based on the current conversationId-->
     <div id="conversationList" class="conversation-list"></div>

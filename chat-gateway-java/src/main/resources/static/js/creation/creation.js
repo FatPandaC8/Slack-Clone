@@ -5,14 +5,29 @@ import { connectWS } from "../websocket/websocket.js";
 export let currentUserId = null;
 export let currentConversationId = null;
 
-export async function setUser(userIdInput) {
-  const uid = userIdInput.value.trim();
-  if (!uid) return alert("userId required");
+function getCurrentUser() {
+  return JSON.parse(localStorage.getItem("currentUser"));
+}
 
-  setCurrentUserId(uid);
-  alert(`You're: ${uid}`)
+function setCurrentUser(user) {
+  localStorage.setItem("currentUser", JSON.stringify(user));
+}
+
+export async function createUser(name, email, password) {
+  const payload = {name, email, password};
+
+  const res = await fetch("/users", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+
+  setCurrentUser(data);
   await connectWS();
   loadMyConversations();
+  return data;
 }
 
 export async function createConversation(convIdInput, memberIdsInput) {

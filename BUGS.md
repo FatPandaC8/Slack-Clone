@@ -33,3 +33,6 @@ BUGS: cannot see the new messages
                         flow => MAKE IT SEPARATE LIKE SLACK DOES.
 
                         chatapp - superchatapp
+
+(10/01/2026)
+[STYLE - ONGOING]       Make the API RESTful
