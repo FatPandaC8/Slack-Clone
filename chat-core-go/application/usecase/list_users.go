@@ -16,5 +16,17 @@ func NewListUsers(repo out.UserRepository) *ListUsers {
 }
 
 func (uc *ListUsers) Execute(conversationId string) ([]dto.UserDTO, error) {
-	return uc.users.List()
+	users, err := uc.users.List()
+	if err != nil {
+		return nil, err
+	}
+	result := make([]dto.UserDTO, 0, len(users))
+	for _, u := range users {
+		result = append(result, dto.UserDTO{
+			ID:   u.ID(),
+			Name: u.Name(),
+		})
+	}
+	return result, nil
 }
+

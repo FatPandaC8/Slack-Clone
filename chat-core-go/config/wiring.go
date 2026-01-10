@@ -32,5 +32,6 @@ func WireCreateUser() *usecase.CreateUser {
 }
 
 func WireListUsers() *usecase.ListUsers {
-	
+	return usecase.NewListUsers(userRepo)
 }
+

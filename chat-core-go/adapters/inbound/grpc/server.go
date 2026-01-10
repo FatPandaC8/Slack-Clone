@@ -10,12 +10,12 @@ import (
 
 type Server struct {
 	chatpb.UnimplementedChatServiceServer
-	sendMessage 				in.SendMessagePort
-	createConversation 			in.CreateConversationPort
-	getConversation 			in.GetConversationPort
-	listConversations 			in.ListConversationPort
-	createUser 					in.CreateUserPort
-	listUser 					in.ListUserPort
+	sendMessage        in.SendMessagePort
+	createConversation in.CreateConversationPort
+	getConversation    in.GetConversationPort
+	listConversations  in.ListConversationPort
+	createUser         in.CreateUserPort
+	listUser           in.ListUserPort
 }
 
 func NewServer(
@@ -27,12 +27,12 @@ func NewServer(
 	listUser in.ListUserPort,
 ) *Server {
 	return &Server{
-		sendMessage:   sendMessage,
+		sendMessage:        sendMessage,
 		createConversation: createConversation,
-		getConversation: getConversation,
-		listConversations: listConversations,
-		createUser: createUser,
-		listUser: listUser,
+		getConversation:    getConversation,
+		listConversations:  listConversations,
+		createUser:         createUser,
+		listUser:           listUser,
 	}
 }
 
@@ -40,25 +40,25 @@ func (s *Server) CreateUser(
 	ctx context.Context,
 	req *chatpb.CreateUserRequest,
 ) (*chatpb.CreateUserResponse, error) {
-	
+
 	cmd := dto.CreateUserCommand{
-		Name: req.GetName(),
-		Email: req.GetEmail(),
+		Name:         req.GetName(),
+		Email:        req.GetEmail(),
 		PasswordHash: req.GetPassword(),
 	}
 
 	u, err := s.createUser.Execute(cmd)
 	if err != nil {
 		return &chatpb.CreateUserResponse{
-			Ok: false,
+			Ok:    false,
 			Error: err.Error(),
 		}, nil
 	}
 
 	return &chatpb.CreateUserResponse{
-		Ok: true,
+		Ok:     true,
 		UserId: u.ID,
-		Name: u.Name,
+		Name:   u.Name,
 	}, nil
 }
 
@@ -89,10 +89,10 @@ func (s *Server) SendMessage(
 ) (*chatpb.SendMessageResponse, error) {
 
 	cmd := dto.SendMessageCommand{
-		MessageID: 		req.GetMessageId(),
+		MessageID:      req.GetMessageId(),
 		ConversationID: req.GetConversationId(),
 		SenderID:       req.GetSenderId(),
-		Text:        	req.GetText(),
+		Text:           req.GetText(),
 	}
 
 	err := s.sendMessage.Execute(cmd)
@@ -115,7 +115,7 @@ func (s *Server) CreateConversation(
 
 	cmd := dto.CreateConversationCommand{
 		ConversationID: req.GetConversationId(),
-		Members:        req.GetMemberIds(), 
+		Members:        req.GetMemberIds(),
 	}
 
 	err := s.createConversation.Execute(cmd)
@@ -129,12 +129,11 @@ func (s *Server) CreateConversation(
 	res := &chatpb.CreateConversationResponse{
 		Ok:             true,
 		ConversationId: cmd.ConversationID,
-		Members:        []*chatpb.ChatUser{}, 
+		Members:        []*chatpb.ChatUser{},
 	}
 
 	return res, nil
 }
-
 
 func (s *Server) GetConversation(
 	ctx context.Context,
@@ -170,7 +169,7 @@ func (s *Server) GetConversation(
 }
 
 func (s *Server) ListConversations(
-	ctx context.Context, 
+	ctx context.Context,
 	req *chatpb.ListConversationsRequest,
 ) (*chatpb.ListConversationsResponse, error) {
 	convs, err := s.listConversations.Execute(req.GetUserId())
@@ -181,10 +180,11 @@ func (s *Server) ListConversations(
 	res := &chatpb.ListConversationsResponse{}
 	for _, c := range convs {
 		res.ConversationId = append(
-			res.ConversationId, 
+			res.ConversationId,
 			string(c.ID()),
 		)
 	}
 
 	return res, nil
 }
+

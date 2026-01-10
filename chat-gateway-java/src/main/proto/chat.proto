@@ -6,13 +6,47 @@ option java_package = "com.example.chat.grpc";
 option java_multiple_files = true;
 
 service ChatService {
+  // Messages
   rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+
+  // Conversations
   rpc CreateConversation (CreateConversationRequest) returns (CreateConversationResponse);
   rpc GetConversation (GetConversationRequest) returns (GetConversationResponse);
   rpc ListConversations (ListConversationsRequest) returns (ListConversationsResponse);
+
+  // Users
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+  rpc ListUsers (ListUserRequest) returns (ListUserResponse);
 }
 
-// GET CONVERSATIONS
+// ---------------------- Users ----------------------
+message ChatUser {
+  string userId = 1;
+  string name = 2;
+}
+
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3; // hash in the server
+}
+
+message CreateUserResponse {
+  bool ok = 1;
+  string error = 2;
+  string userId = 3;
+  string name = 4;
+}
+
+message ListUserRequest {
+  string conversationId = 1;
+}
+
+message ListUserResponse {
+  repeated ChatUser users = 1;
+}
+
+// ---------------------- Conversations ----------------------
 message GetConversationRequest {
   string conversationId = 1;
 }
@@ -20,28 +54,31 @@ message GetConversationRequest {
 message GetConversationResponse {
   string conversationId = 1;
   repeated ChatMessage messages = 2;
+  repeated ChatUser members = 3;
 }
 
 message ChatMessage {
   string messageId = 1;
   string senderId = 2;
   string text = 3;
+  string createdAt = 4; // RFC3339 format
 }
 
-// CREATE CONVERSATIONS
 message CreateConversationRequest {
-  string conversationId = 1;
+  string conversationId = 1; // optional, can be empty and generated server-side
   repeated string memberIds = 2;
 }
 
 message CreateConversationResponse {
   bool ok = 1;
   string error = 2;
+  string conversationId = 3;
+  repeated ChatUser members = 4;
 }
 
-// SEND MESSAGES 
+// ---------------------- Sending Messages ----------------------
 message SendMessageRequest {
-  string messageId = 1;
+  string messageId = 1; // optional, can be generated server-side
   string conversationId = 2;
   string senderId = 3;
   string text = 4;
@@ -50,9 +87,11 @@ message SendMessageRequest {
 message SendMessageResponse {
   bool ok = 1;
   string error = 2;
+  string messageId = 3;
+  string createdAt = 4; // RFC3339
 }
 
-// LIST CONVERSATIONS
+// ---------------------- Listing Conversations ----------------------
 message ListConversationsRequest {
   string userId = 1;
 }

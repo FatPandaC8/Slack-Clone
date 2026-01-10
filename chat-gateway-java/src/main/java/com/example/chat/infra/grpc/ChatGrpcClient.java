@@ -8,12 +8,18 @@ import org.springframework.stereotype.Component;
 import com.example.chat.grpc.ChatServiceGrpc;
 import com.example.chat.grpc.CreateConversationRequest;
 import com.example.chat.grpc.CreateConversationResponse;
+import com.example.chat.grpc.CreateUserRequest;
+import com.example.chat.grpc.CreateUserResponse;
 import com.example.chat.grpc.GetConversationRequest;
 import com.example.chat.grpc.GetConversationResponse;
 import com.example.chat.grpc.ListConversationsRequest;
 import com.example.chat.grpc.ListConversationsResponse;
+import com.example.chat.grpc.ListUserRequest;
+import com.example.chat.grpc.ListUserResponse;
 import com.example.chat.grpc.SendMessageRequest;
 import com.example.chat.grpc.SendMessageResponse;
+import com.example.chat.web.dto.CreateUserResponseView;
+import com.example.chat.web.dto.UserView;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -91,5 +97,36 @@ public class ChatGrpcClient {
         ListConversationsResponse res = stub.listConversations(req);
         
         return res.getConversationIdList();
+    }
+
+    public CreateUserResponseView createUser(String name, String email, String password) {
+        CreateUserRequest req = CreateUserRequest.newBuilder()
+                                                .setName(name)
+                                                .setEmail(email)
+                                                .setPassword(password)
+                                                .build();
+
+        CreateUserResponse res = stub.createUser(req);
+
+        if (!res.getOk()) {
+            throw new RuntimeException(res.getError());
+        }
+
+        return new CreateUserResponseView(
+            res.getUserId(),
+            res.getName()
+        );
+    }
+
+    public List<UserView> listUsers(String conversationId) {
+        ListUserRequest req = ListUserRequest.newBuilder()
+                                            .setConversationId(conversationId)
+                                            .build();
+
+        ListUserResponse res = stub.listUsers(req);
+        return res.getUsersList()
+                        .stream()
+                        .map(u -> new UserView(u.getUserId(), u.getName()))
+                        .collect(Collectors.toList());
     }
 }

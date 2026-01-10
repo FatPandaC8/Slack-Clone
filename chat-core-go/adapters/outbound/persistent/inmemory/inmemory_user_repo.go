@@ -8,8 +8,8 @@ import (
 )
 
 type InMemoryUserRepo struct {
-	store map[string]*user.User
-	mu sync.Mutex
+	store   map[string]*user.User
+	mu      sync.Mutex
 	counter int
 }
 
@@ -48,4 +48,12 @@ func (r *InMemoryUserRepo) Load(id string) (*user.User, error) {
 		return nil, errors.New("user not found")
 	}
 	return u, nil
+}
+
+func (r *InMemoryUserRepo) List() ([]*user.User, error) {
+	users := make([]*user.User, 0, len(r.store))
+	for _, u := range r.store {
+		users = append(users, u)
+	}
+	return users, nil
 }

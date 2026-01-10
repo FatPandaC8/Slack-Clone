@@ -1,4 +1,4 @@
-package com.example.chat.web;
+package com.example.chat.web.controller;
 
 import java.util.List;
 

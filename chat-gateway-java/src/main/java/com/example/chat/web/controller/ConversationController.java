@@ -1,4 +1,4 @@
-package com.example.chat.web;
+package com.example.chat.web.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;

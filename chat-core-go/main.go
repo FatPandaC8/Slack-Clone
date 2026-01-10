@@ -16,16 +16,20 @@ func main() {
 	createConversationUC := config.WireCreateConversation()
 	getConversationUC := config.WireGetConversation()
 	listConversationsUC := config.WireListConversations()
+	createUserUC := config.WireCreateUser()
+	listUserUC := config.WireListUsers()
 
 	grpcServer := grpc.NewServer()
 
 	chatServer := grpcadapter.NewServer(
 		sendMessageUC,
 		createConversationUC,
-		getConversationUC, 
+		getConversationUC,
 		listConversationsUC,
+		createUserUC,
+		listUserUC,
 	)
-	
+
 	chatpb.RegisterChatServiceServer(grpcServer, chatServer)
 
 	lis, err := net.Listen("tcp", ":50051")
