@@ -9,10 +9,6 @@ function setCurrentUser(user) {
   localStorage.setItem("currentUser", JSON.stringify(user));
 }
 
-function getCurrentUser() {
-    return JSON.parse(localStorage.getItem("currentUser"));
-}
-
 export async function createUser(name, email, password) {
   const payload = {name, email, password};
 
@@ -27,7 +23,6 @@ export async function createUser(name, email, password) {
   setCurrentUser(data);
   currentUserId = data.id;
   await connectWS();
-  loadMyConversations();
   return data;
 }
 

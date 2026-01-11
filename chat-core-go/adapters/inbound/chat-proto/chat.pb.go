@@ -400,7 +400,8 @@ type ChatMessage struct {
 	MessageId     string                 `protobuf:"bytes,1,opt,name=messageId,proto3" json:"messageId,omitempty"`
 	SenderId      string                 `protobuf:"bytes,2,opt,name=senderId,proto3" json:"senderId,omitempty"`
 	Text          string                 `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,4,opt,name=createdAt,proto3" json:"createdAt,omitempty"` // RFC3339 format
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,5,opt,name=createdAt,proto3" json:"createdAt,omitempty"` // RFC3339 format
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -452,6 +453,13 @@ func (x *ChatMessage) GetSenderId() string {
 func (x *ChatMessage) GetText() string {
 	if x != nil {
 		return x.Text
+	}
+	return ""
+}
+
+func (x *ChatMessage) GetName() string {
+	if x != nil {
+		return x.Name
 	}
 	return ""
 }
@@ -1008,12 +1016,13 @@ const file_chat_proto_rawDesc = "" +
 	"\x17GetConversationResponse\x12&\n" +
 	"\x0econversationId\x18\x01 \x01(\tR\x0econversationId\x12-\n" +
 	"\bmessages\x18\x02 \x03(\v2\x11.chat.ChatMessageR\bmessages\x12(\n" +
-	"\amembers\x18\x03 \x03(\v2\x0e.chat.ChatUserR\amembers\"y\n" +
+	"\amembers\x18\x03 \x03(\v2\x0e.chat.ChatUserR\amembers\"\x8d\x01\n" +
 	"\vChatMessage\x12\x1c\n" +
 	"\tmessageId\x18\x01 \x01(\tR\tmessageId\x12\x1a\n" +
 	"\bsenderId\x18\x02 \x01(\tR\bsenderId\x12\x12\n" +
-	"\x04text\x18\x03 \x01(\tR\x04text\x12\x1c\n" +
-	"\tcreatedAt\x18\x04 \x01(\tR\tcreatedAt\"M\n" +
+	"\x04text\x18\x03 \x01(\tR\x04text\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1c\n" +
+	"\tcreatedAt\x18\x05 \x01(\tR\tcreatedAt\"M\n" +
 	"\x19CreateConversationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1c\n" +
 	"\tcreatorId\x18\x02 \x01(\tR\tcreatorId\"\x9e\x01\n" +

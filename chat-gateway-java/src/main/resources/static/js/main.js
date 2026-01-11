@@ -40,7 +40,7 @@ createConvBtn.addEventListener("click", () => createConversation(convNameInput))
 
 sendMessageBtn.addEventListener("click",       () => send(textInput));
 
-joinBtn.addEventListener("click", async () => joinConversation(inviteCodeInput));
+joinBtn.addEventListener("click", async () => joinConversation(inviteCodeInput.value));
 
 textInput.addEventListener("input",     () => {
     sendTyping(currentConversationId, currentUserId);

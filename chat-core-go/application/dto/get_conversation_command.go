@@ -8,6 +8,7 @@ type GetConversationDTO struct {
 
 type MessageDTO struct {
 	ID        string
+	Name 		string
 	SenderID  string
 	Content   string
 	CreatedAt string

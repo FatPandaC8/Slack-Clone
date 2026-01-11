@@ -5,7 +5,7 @@ function getCurrentUser() {
 }
 
 export async function joinConversation(inviteCode) {
-  const invite = inviteCode.value.trim();
+  const invite = inviteCode.trim();
   const user = getCurrentUser();
 
   if (!user) {
@@ -27,11 +27,13 @@ export async function joinConversation(inviteCode) {
     })
   });
 
+  console.log(invite);
+
   if (!res.ok) {
     alert("Failed to join conversation");
     return;
   }
 
-  await loadMyConversations();
+  loadMyConversations();
   alert("Joined conversation!");
 }

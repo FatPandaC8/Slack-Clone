@@ -38,7 +38,7 @@ public class MessageController {
 
         ws.convertAndSend(
             "/topic/conversations/" + conversationId,
-            new MessageView(conversationId, req.senderId(), req.text())
+            new MessageView(conversationId, req.senderId(), req.text(), req.name())
         );
     }
 }

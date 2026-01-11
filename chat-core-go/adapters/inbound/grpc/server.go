@@ -177,6 +177,7 @@ func (s *Server) GetConversation(
 			MessageId: msg.ID,
 			SenderId:  msg.SenderID,
 			Text:      msg.Content,
+			Name: 	msg.Name,	
 			CreatedAt: msg.CreatedAt,
 		})
 	}

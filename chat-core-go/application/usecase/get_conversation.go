@@ -40,6 +40,7 @@ func (uc *GetConversation) Execute(id string) (*dto.GetConversationDTO, error) {
 			ID: msg.ID(),
 			SenderID:  msg.Sender(),
 			Content:   msg.Content().Value(),
+			Name: msg.Name,
 			CreatedAt: msg.CreatedAt().Format(time.RFC3339),
 		})
 	}

@@ -9,14 +9,16 @@ export async function loadMyConversations() {
   const list = document.getElementById("conversationList");
   list.innerHTML = ""
 
-  convs.forEach(id => {
+  console.log(convs);
+
+  convs.forEach(conv => {
     const btn = document.createElement("button");
-    btn.innerText = id;
+    btn.innerText = conv.name;
     btn.onclick = () => {
-      setCurrentConversationId(id);
-      loadConversation(id);
-      subscribeTyping(id);
-      subscribeConversation(id);
+      setCurrentConversationId(conv.id);
+      loadConversation(conv.id);
+      subscribeTyping(conv.id);
+      subscribeConversation(conv.id);
     };
     list.appendChild(btn);
   });
