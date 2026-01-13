@@ -45,3 +45,6 @@ BUGS: cannot see the new messages
                               - [object Object] => Look for stringify({}) -> [object Object]
                               => Fixed because of loadMyConversation() now returns a array of object not just id anymore
                               3) Not fault tolarant (if go server down, the whole thing is down)
+
+## (13/01/2026)               
+[Security - JWT]              Can validate each time directly in Go handlers 

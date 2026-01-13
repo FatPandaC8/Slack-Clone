@@ -27,8 +27,15 @@ import com.example.chat.web.dto.ListPerUserConversationView;
 import com.example.chat.web.dto.LoginResponseView;
 import com.example.chat.web.dto.UserView;
 
+import io.grpc.CallOptions;
+import io.grpc.Channel;
+import io.grpc.ClientCall;
+import io.grpc.ClientInterceptor;
+import io.grpc.ForwardingClientCall;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
+import io.grpc.MethodDescriptor;
 
 @Component
 public class ChatGrpcClient {
@@ -43,11 +50,13 @@ public class ChatGrpcClient {
     }
 
     public void sendMessage(
+        String token,
         String messageId,
         String conversationId,
         String senderId,
         String text
     ) {
+        var authStub = withToken(token);
         SendMessageRequest request = SendMessageRequest.newBuilder()
                                                     .setMessageId(messageId)
                                                     .setConversationId(conversationId)
@@ -55,20 +64,21 @@ public class ChatGrpcClient {
                                                     .setText(text)
                                                     .build();
         
-        SendMessageResponse response = stub.sendMessage(request);
+        SendMessageResponse response = authStub.sendMessage(request);
         
         if (!response.getOk()) {
             throw new RuntimeException(response.getError());
         }
     }
 
-    public CreateConversationResponseView createConversation(String name, String creatorId) {
+    public CreateConversationResponseView createConversation(String token, String name, String creatorId) {
+        var authStub = withToken(token);
         CreateConversationRequest req = CreateConversationRequest.newBuilder()
                                                         .setName(name)
                                                         .setCreatorId(creatorId)
                                                         .build();
         
-        CreateConversationResponse res = stub.createConversation(req);
+        CreateConversationResponse res = authStub.createConversation(req);
         
         if (!res.getOk()) {
             throw new RuntimeException(res.getError());
@@ -81,12 +91,13 @@ public class ChatGrpcClient {
         );
     }
 
-    public ConversationView getConversation(String conversationId) {
+    public ConversationView getConversation(String token, String conversationId) {
+        var authStub = withToken(token);
         GetConversationRequest req = GetConversationRequest.newBuilder()
                                                             .setConversationId(conversationId)
                                                             .build();
 
-        GetConversationResponse res = stub.getConversation(req);
+        GetConversationResponse res = authStub.getConversation(req);
         
         List<MessageView> messageViews = res.getMessagesList()
                                             .stream()
@@ -102,12 +113,13 @@ public class ChatGrpcClient {
         return new ConversationView(res.getConversationId(), messageViews);
     }
 
-    public List<ListPerUserConversationView> listConversations(String userId) {
+    public List<ListPerUserConversationView> listConversations(String token, String userId) {
+        var authStub = withToken(token);
         ListConversationsRequest req = ListConversationsRequest.newBuilder()
                                                                 .setUserId(userId)
                                                                 .build();
 
-        ListConversationsResponse res = stub.listConversations(req);
+        ListConversationsResponse res = authStub.listConversations(req);
         
         return res.getConversationsList()
                                 .stream()
@@ -118,25 +130,27 @@ public class ChatGrpcClient {
                                 .collect(Collectors.toList());
     }
 
-    public List<UserView> listUsers(String conversationId) {
+    public List<UserView> listUsers(String token, String conversationId) {
+        var authStub = withToken(token);
         ListUserRequest req = ListUserRequest.newBuilder()
                                             .setConversationId(conversationId)
                                             .build();
 
-        ListUserResponse res = stub.listUsers(req);
+        ListUserResponse res = authStub.listUsers(req);
         return res.getUsersList()
                         .stream()
                         .map(u -> new UserView(u.getUserId(), u.getName()))
                         .collect(Collectors.toList());
     }
 
-    public void joinConversation(String inviteCode, String userId) {
+    public void joinConversation(String token, String inviteCode, String userId) {
+        var authStub = withToken(token);
         JoinConversationRequest req = JoinConversationRequest.newBuilder()
                                                             .setInviteCode(inviteCode)
                                                             .setUserId(userId)
                                                             .build();
 
-        JoinConversationResponse res = stub.joinConversation(req);
+        JoinConversationResponse res = authStub.joinConversation(req);
 
         if (!res.getOk()) {
             throw new RuntimeException(res.getError());
@@ -181,4 +195,28 @@ public class ChatGrpcClient {
         );
     }
 
+    public ChatServiceGrpc.ChatServiceBlockingStub withToken(String token) {
+        ClientInterceptor authInterceptor = new ClientInterceptor() {
+            @Override
+            public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(
+                MethodDescriptor<ReqT, RespT> method,
+                CallOptions callOptions,
+                Channel next
+            ) {
+                return new ForwardingClientCall.SimpleForwardingClientCall<>(
+                    next.newCall(method, callOptions)
+                ) {
+                    @Override
+                    public void start(Listener<RespT> responseListener, Metadata headers) {
+                        Metadata.Key<String> authKey =
+                            Metadata.Key.of("authorization", Metadata.ASCII_STRING_MARSHALLER);
+
+                        headers.put(authKey, "Bearer " + token);
+                        super.start(responseListener, headers);
+                    }
+                };
+            }
+        };
+        return stub.withInterceptors(authInterceptor);
+    }
 }

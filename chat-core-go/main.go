@@ -21,7 +21,9 @@ func main() {
 	registerUserUC := config.WireRegisterUser()
 	loginUserUC := config.WireLoginUser()
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(grpcadapter.AuthInterceptor(config.TokenJWT)),
+	)
 
 	chatServer := grpcadapter.NewServer(
 		sendMessageUC,

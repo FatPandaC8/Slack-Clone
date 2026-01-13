@@ -15,12 +15,13 @@ public class SendMessageService {
     }
 
     public void send(
+        String token,
         String conversationId, 
         String senderId,
-        String text 
+        String text
     ) {
         String messageId = UUID.randomUUID().toString();
 
-        grpcClient.sendMessage(messageId, conversationId, senderId, text);
+        grpcClient.sendMessage(token, messageId, conversationId, senderId, text);
     }
 }

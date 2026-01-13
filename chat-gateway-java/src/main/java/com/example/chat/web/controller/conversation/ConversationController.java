@@ -1,10 +1,11 @@
-package com.example.chat.web.controller;
+package com.example.chat.web.controller.conversation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,18 +27,30 @@ public class ConversationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateConversationResponseView create(@RequestBody CreateConversationHttpRequest req) {
-        return grpcClient.createConversation(req.name(), req.creatorId());
+    public CreateConversationResponseView create(
+        @RequestBody CreateConversationHttpRequest req,
+        @RequestHeader("Authorization") String authHeader
+    ) {
+        String token = authHeader.replace("Bearer", "");
+        return grpcClient.createConversation(token, req.name(), req.creatorId());
     }
 
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void join(@RequestBody JoinConversationHttpRequest req) {
-        grpcClient.joinConversation(req.inviteCode(), req.userId());
+    public void join(
+        @RequestBody JoinConversationHttpRequest req,
+        @RequestHeader("Authorization") String authHeader
+    ) {
+        String token = authHeader.replace("Bearer", "");
+        grpcClient.joinConversation(token, req.inviteCode(), req.userId());
     }
 
     @GetMapping("/{conversationId}")
-    public ConversationView get(@PathVariable String conversationId) {
-        return grpcClient.getConversation(conversationId);
+    public ConversationView get(
+        @PathVariable String conversationId,
+        @RequestHeader("Authorization") String authHeader
+    ) {
+        String token = authHeader.replace("Bearer", "");
+        return grpcClient.getConversation(token, conversationId);
     }
 }
