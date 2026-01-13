@@ -14,9 +14,10 @@ type Server struct {
 	createConversation in.CreateConversationPort
 	getConversation    in.GetConversationPort
 	listConversations  in.ListConversationPort
-	createUser         in.CreateUserPort
 	listUser           in.ListUserPort
 	joinConversation   in.JoinConversationPort
+	registerUser       in.RegisterUserPort
+    loginUser          in.LoginUserPort
 }
 
 func NewServer(
@@ -24,45 +25,71 @@ func NewServer(
 	createConversation in.CreateConversationPort,
 	getConversation in.GetConversationPort,
 	listConversations in.ListConversationPort,
-	createUser in.CreateUserPort,
 	listUser in.ListUserPort,
 	joinConversation in.JoinConversationPort,
+	registerUser in.RegisterUserPort,
+    loginUser in.LoginUserPort,
 ) *Server {
 	return &Server{
 		sendMessage:        sendMessage,
 		createConversation: createConversation,
 		getConversation:    getConversation,
 		listConversations:  listConversations,
-		createUser:         createUser,
 		listUser:           listUser,
 		joinConversation: joinConversation,
+		registerUser: registerUser,
+		loginUser: loginUser,
 	}
 }
 
-func (s *Server) CreateUser(
-	ctx context.Context,
-	req *chatpb.CreateUserRequest,
-) (*chatpb.CreateUserResponse, error) {
+func (s *Server) RegisterUser(
+    ctx context.Context,
+    req *chatpb.RegisterUserRequest,
+) (*chatpb.RegisterUserResponse, error) {
 
-	cmd := dto.CreateUserCommand{
-		Name:         req.GetName(),
-		Email:        req.GetEmail(),
-		PasswordHash: req.GetPassword(),
-	}
+    result, err := s.registerUser.Execute(dto.RegisterUserCommand{
+        Name:     req.GetName(),
+        Email:    req.GetEmail(),
+        Password: req.GetPassword(),
+    })
 
-	u, err := s.createUser.Execute(cmd)
-	if err != nil {
-		return &chatpb.CreateUserResponse{
-			Ok:    false,
-			Error: err.Error(),
-		}, nil
-	}
+    if err != nil {
+        return &chatpb.RegisterUserResponse{
+            Ok:    false,
+            Error: err.Error(),
+        }, nil
+    }
 
-	return &chatpb.CreateUserResponse{
-		Ok:     true,
-		UserId: u.ID,
-		Name:   u.Name,
-	}, nil
+    return &chatpb.RegisterUserResponse{
+        Ok:     true,
+        UserId: result.ID,
+        Name:   result.Name,
+    }, nil
+}
+
+func (s *Server) LoginUser(
+    ctx context.Context,
+    req *chatpb.LoginUserRequest,
+) (*chatpb.LoginUserResponse, error) {
+
+    result, err := s.loginUser.Execute(dto.LoginUserCommand{
+        Email:    req.GetEmail(),
+        Password: req.GetPassword(),
+    })
+
+    if err != nil {
+        return &chatpb.LoginUserResponse{
+            Ok:    false,
+            Error: err.Error(),
+        }, nil
+    }
+
+    return &chatpb.LoginUserResponse{
+        Ok:     true,
+        UserId: result.UserID,
+        Name:   result.Name,
+        Token:  result.Token,
+    }, nil
 }
 
 func (s *Server) ListUsers(

@@ -1,7 +1,7 @@
 package com.example.chat.web.dto;
 
-public record CreateUserResponseView(
-    String id, 
+public record CreateUserReponseView(
+    String userId,
     String name
 ) {
     

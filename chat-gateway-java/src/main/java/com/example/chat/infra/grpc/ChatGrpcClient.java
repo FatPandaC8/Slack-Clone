@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 import com.example.chat.grpc.ChatServiceGrpc;
 import com.example.chat.grpc.CreateConversationRequest;
 import com.example.chat.grpc.CreateConversationResponse;
-import com.example.chat.grpc.CreateUserRequest;
-import com.example.chat.grpc.CreateUserResponse;
 import com.example.chat.grpc.GetConversationRequest;
 import com.example.chat.grpc.GetConversationResponse;
 import com.example.chat.grpc.JoinConversationRequest;
@@ -18,11 +16,15 @@ import com.example.chat.grpc.ListConversationsRequest;
 import com.example.chat.grpc.ListConversationsResponse;
 import com.example.chat.grpc.ListUserRequest;
 import com.example.chat.grpc.ListUserResponse;
+import com.example.chat.grpc.LoginUserRequest;
+import com.example.chat.grpc.LoginUserResponse;
+import com.example.chat.grpc.RegisterUserRequest;
+import com.example.chat.grpc.RegisterUserResponse;
 import com.example.chat.grpc.SendMessageRequest;
 import com.example.chat.grpc.SendMessageResponse;
 import com.example.chat.web.dto.CreateConversationResponseView;
-import com.example.chat.web.dto.CreateUserResponseView;
 import com.example.chat.web.dto.ListPerUserConversationView;
+import com.example.chat.web.dto.LoginResponseView;
 import com.example.chat.web.dto.UserView;
 
 import io.grpc.ManagedChannel;
@@ -116,25 +118,6 @@ public class ChatGrpcClient {
                                 .collect(Collectors.toList());
     }
 
-    public CreateUserResponseView createUser(String name, String email, String password) {
-        CreateUserRequest req = CreateUserRequest.newBuilder()
-                                                .setName(name)
-                                                .setEmail(email)
-                                                .setPassword(password)
-                                                .build();
-
-        CreateUserResponse res = stub.createUser(req);
-
-        if (!res.getOk()) {
-            throw new RuntimeException(res.getError());
-        }
-
-        return new CreateUserResponseView(
-            res.getUserId(),
-            res.getName()
-        );
-    }
-
     public List<UserView> listUsers(String conversationId) {
         ListUserRequest req = ListUserRequest.newBuilder()
                                             .setConversationId(conversationId)
@@ -159,4 +142,43 @@ public class ChatGrpcClient {
             throw new RuntimeException(res.getError());
         }
     }
+
+    public UserView register(String name, String email, String password) {
+        RegisterUserRequest req = RegisterUserRequest.newBuilder()
+            .setName(name)
+            .setEmail(email)
+            .setPassword(password)
+            .build();
+
+        RegisterUserResponse res = stub.registerUser(req);
+
+        if (!res.getOk()) {
+            throw new RuntimeException(res.getError());
+        }
+
+        return new UserView(
+            res.getUserId(),
+            res.getName()
+        );
+    }
+
+    public LoginResponseView login(String email, String password) {
+        LoginUserRequest req = LoginUserRequest.newBuilder()
+            .setEmail(email)
+            .setPassword(password)
+            .build();
+
+        LoginUserResponse res = stub.loginUser(req);
+
+        if (!res.getOk()) {
+            throw new RuntimeException(res.getError());
+        }
+
+        return new LoginResponseView(
+            res.getUserId(),
+            res.getName(),
+            res.getToken()
+        );
+    }
+
 }

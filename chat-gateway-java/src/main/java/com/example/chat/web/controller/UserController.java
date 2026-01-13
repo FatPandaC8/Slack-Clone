@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.chat.infra.grpc.ChatGrpcClient;
 import com.example.chat.web.dto.CreateUserHttpRequest;
-import com.example.chat.web.dto.CreateUserResponseView;
+import com.example.chat.web.dto.CreateUserReponseView;
+import com.example.chat.web.dto.LoginRequest;
+import com.example.chat.web.dto.LoginResponseView;
 import com.example.chat.web.dto.UserView;
 
 @RestController
@@ -25,13 +27,27 @@ public class UserController {
         this.grpcClient = grpcClient;
     } 
 
-    @PostMapping
+    @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateUserResponseView create(@RequestBody CreateUserHttpRequest req) {
-        return grpcClient.createUser(
-            req.name(),
-            req.email(), 
-            req.password()
+        public CreateUserReponseView register(@RequestBody CreateUserHttpRequest body) {
+
+        var user = grpcClient.register(
+            body.name(),
+            body.email(),
+            body.password()
+        );
+
+        return new CreateUserReponseView(
+            user.id(),
+            user.name()
+        );
+    }
+
+    @PostMapping("/login")
+    public LoginResponseView login(@RequestBody LoginRequest body) {
+        return grpcClient.login(
+            body.email(),
+            body.password()
         );
     }
 

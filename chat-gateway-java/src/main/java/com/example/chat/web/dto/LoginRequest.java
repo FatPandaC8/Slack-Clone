@@ -1,7 +1,6 @@
 package com.example.chat.web.dto;
 
-public record CreateUserHttpRequest(
-    String name,
+public record LoginRequest(
     String email,
     String password
 ) {

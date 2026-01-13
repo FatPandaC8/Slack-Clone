@@ -33,6 +33,7 @@ func (uc *GetConversation) Execute(id string) (*dto.GetConversationDTO, error) {
 	var messages []dto.MessageDTO
 	for _, msgID := range conv.MessageIDs() {
 		msg, err := uc.messages.Load(msgID)
+		user, err := uc.users.Load(msg.Sender())
 		if err != nil {
 			continue // skip error messages
 		}
@@ -40,7 +41,7 @@ func (uc *GetConversation) Execute(id string) (*dto.GetConversationDTO, error) {
 			ID: msg.ID(),
 			SenderID:  msg.Sender(),
 			Content:   msg.Content().Value(),
-			Name: msg.Name,
+			Name: user.Name(),
 			CreatedAt: msg.CreatedAt().Format(time.RFC3339),
 		})
 	}

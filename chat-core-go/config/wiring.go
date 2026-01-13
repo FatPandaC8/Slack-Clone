@@ -1,6 +1,8 @@
 package config
 
 import (
+	"chat-core-go/adapters/outbound/bcryptadapter"
+	"chat-core-go/adapters/outbound/jwtadapter"
 	"chat-core-go/adapters/outbound/persistent/inmemory"
 	"chat-core-go/adapters/outbound/publisher"
 	"chat-core-go/application/usecase"
@@ -9,6 +11,8 @@ import (
 var conversationRepo = persistent.NewInMemoryConversationRepo()
 var messageRepo = persistent.NewInMemoryMessageRepo()
 var userRepo = persistent.NewInmemoryUserRepo()
+var passwordHasher = bcryptadapter.New()
+var tokenJWT = jwtadapter.NewJWTService("super-secret-dev-key") // for production, put it in env variables
 
 func WireSendMessage() *usecase.SendMessage {
 	pub := &publisher.LogPublisher{}
@@ -27,10 +31,6 @@ func WireListConversations() *usecase.ListConversations {
 	return usecase.NewListConversations(conversationRepo)
 }
 
-func WireCreateUser() *usecase.CreateUser {
-	return usecase.NewCreateUser(userRepo)
-}
-
 func WireListUsers() *usecase.ListUsers {
 	return usecase.NewListUsers(userRepo)
 }
@@ -39,3 +39,17 @@ func WireJoinConversation() *usecase.JoinConversation {
 	return usecase.NewJoinConversation(conversationRepo)
 }
 
+func WireRegisterUser() *usecase.RegisterUser {
+	return usecase.NewRegisterUser(
+		userRepo,
+		passwordHasher,
+	)
+}
+
+func WireLoginUser() *usecase.LoginUser {
+	return usecase.NewLoginUser(
+		userRepo,
+		passwordHasher,
+		tokenJWT,
+	)
+}

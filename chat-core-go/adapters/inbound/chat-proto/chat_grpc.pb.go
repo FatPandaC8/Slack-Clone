@@ -24,7 +24,8 @@ const (
 	ChatService_GetConversation_FullMethodName    = "/chat.ChatService/GetConversation"
 	ChatService_ListConversations_FullMethodName  = "/chat.ChatService/ListConversations"
 	ChatService_JoinConversation_FullMethodName   = "/chat.ChatService/JoinConversation"
-	ChatService_CreateUser_FullMethodName         = "/chat.ChatService/CreateUser"
+	ChatService_RegisterUser_FullMethodName       = "/chat.ChatService/RegisterUser"
+	ChatService_LoginUser_FullMethodName          = "/chat.ChatService/LoginUser"
 	ChatService_ListUsers_FullMethodName          = "/chat.ChatService/ListUsers"
 )
 
@@ -40,7 +41,8 @@ type ChatServiceClient interface {
 	ListConversations(ctx context.Context, in *ListConversationsRequest, opts ...grpc.CallOption) (*ListConversationsResponse, error)
 	JoinConversation(ctx context.Context, in *JoinConversationRequest, opts ...grpc.CallOption) (*JoinConversationResponse, error)
 	// Users
-	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
+	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
+	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	ListUsers(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserResponse, error)
 }
 
@@ -102,10 +104,20 @@ func (c *chatServiceClient) JoinConversation(ctx context.Context, in *JoinConver
 	return out, nil
 }
 
-func (c *chatServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+func (c *chatServiceClient) RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateUserResponse)
-	err := c.cc.Invoke(ctx, ChatService_CreateUser_FullMethodName, in, out, cOpts...)
+	out := new(RegisterUserResponse)
+	err := c.cc.Invoke(ctx, ChatService_RegisterUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatServiceClient) LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoginUserResponse)
+	err := c.cc.Invoke(ctx, ChatService_LoginUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +146,8 @@ type ChatServiceServer interface {
 	ListConversations(context.Context, *ListConversationsRequest) (*ListConversationsResponse, error)
 	JoinConversation(context.Context, *JoinConversationRequest) (*JoinConversationResponse, error)
 	// Users
-	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
+	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
+	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	ListUsers(context.Context, *ListUserRequest) (*ListUserResponse, error)
 	mustEmbedUnimplementedChatServiceServer()
 }
@@ -161,8 +174,11 @@ func (UnimplementedChatServiceServer) ListConversations(context.Context, *ListCo
 func (UnimplementedChatServiceServer) JoinConversation(context.Context, *JoinConversationRequest) (*JoinConversationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method JoinConversation not implemented")
 }
-func (UnimplementedChatServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
+func (UnimplementedChatServiceServer) RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RegisterUser not implemented")
+}
+func (UnimplementedChatServiceServer) LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method LoginUser not implemented")
 }
 func (UnimplementedChatServiceServer) ListUsers(context.Context, *ListUserRequest) (*ListUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUsers not implemented")
@@ -278,20 +294,38 @@ func _ChatService_JoinConversation_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ChatService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateUserRequest)
+func _ChatService_RegisterUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatServiceServer).CreateUser(ctx, in)
+		return srv.(ChatServiceServer).RegisterUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ChatService_CreateUser_FullMethodName,
+		FullMethod: ChatService_RegisterUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatServiceServer).CreateUser(ctx, req.(*CreateUserRequest))
+		return srv.(ChatServiceServer).RegisterUser(ctx, req.(*RegisterUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatService_LoginUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).LoginUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatService_LoginUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).LoginUser(ctx, req.(*LoginUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -342,8 +376,12 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ChatService_JoinConversation_Handler,
 		},
 		{
-			MethodName: "CreateUser",
-			Handler:    _ChatService_CreateUser_Handler,
+			MethodName: "RegisterUser",
+			Handler:    _ChatService_RegisterUser_Handler,
+		},
+		{
+			MethodName: "LoginUser",
+			Handler:    _ChatService_LoginUser_Handler,
 		},
 		{
 			MethodName: "ListUsers",
