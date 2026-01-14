@@ -1,11 +1,11 @@
 import { getToken } from "../auth/auth.js";
-import { currentUserId, setCurrentConversationId } from "../creation/creation.js";
+import { setCurrentConversationId } from "../creation/creation.js";
 import { subscribeConversation, subscribeTyping } from "../websocket/websocket.js";
 import { loadConversation } from "./loadConversation.js";
 
 export async function loadMyConversations() {
   const token = getToken();
-  const res = await fetch(`/users/${currentUserId}/conversations`, {
+  const res = await fetch(`/users/me/conversations`, {
     headers: {
       "Authorization": "Bearer " + token
     }

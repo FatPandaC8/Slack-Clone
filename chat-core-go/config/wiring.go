@@ -12,7 +12,7 @@ var conversationRepo = persistent.NewInMemoryConversationRepo()
 var messageRepo = persistent.NewInMemoryMessageRepo()
 var userRepo = persistent.NewInmemoryUserRepo()
 var passwordHasher = bcryptadapter.New()
-var TokenJWT = jwtadapter.NewJWTService("super-secret-dev-key") // for production, put it in env variables
+var TokenJWT = jwtadapter.NewJWTService("xsaeslrtjtupzegqbzkuohkotelteuxvqlnmwrhonlrvhyvfterihobznadpjttf") // for production, put it in env variables
 
 func WireSendMessage() *usecase.SendMessage {
 	pub := &publisher.LogPublisher{}

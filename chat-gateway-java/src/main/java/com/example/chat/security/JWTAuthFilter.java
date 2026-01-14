@@ -28,13 +28,13 @@ public class JWTAuthFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
+            String token = header.substring(7).trim();
             try {
                 String userId = validator.validateAndGetUserId(token);
                 request.setAttribute("userId", userId);
                 request.setAttribute("token", token);
             } catch (Exception e) {
-                throw new ServletException("Invalid token");
+                throw new ServletException("Invalid token " + e.getMessage());
             }
         }
         chain.doFilter(req, res);

@@ -39,10 +39,10 @@
     const data = await res.json();
 
     // save token + user
-    localStorage.setItem("token", data.Token);
+    localStorage.setItem("token", data.token);
     localStorage.setItem("currentUser", JSON.stringify({
-      id: data.UserId,
-      name: data.Name
+      id: data.userId,
+      name: data.name
     }));
 
     // go to chat app

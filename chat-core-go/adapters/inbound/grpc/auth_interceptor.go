@@ -38,7 +38,8 @@ func AuthInterceptor(jwtService *jwtadapter.JWTService) grpc.UnaryServerIntercep
             return nil, status.Error(codes.Unauthenticated, "missing authorization header")
         }
 
-        token := values[0]
+        token := strings.TrimPrefix(values[0], "Bearer ")
+        token = strings.TrimSpace(token)
 
         userId, err := jwtService.VerifyToken(token)
         if err != nil {

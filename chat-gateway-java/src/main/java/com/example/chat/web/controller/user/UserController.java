@@ -57,7 +57,7 @@ public class UserController {
         @PathVariable String conversationId,
         @RequestHeader("Authorization") String authHeader
     ) {
-        String token = authHeader.replace("Bearer", "");
+        String token = authHeader.replace("Bearer ", "");
         return grpcClient.listUsers(token, conversationId);
     }
 }

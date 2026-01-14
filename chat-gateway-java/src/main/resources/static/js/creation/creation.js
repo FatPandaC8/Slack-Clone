@@ -20,8 +20,8 @@ export async function createConversation(convNameInput) {
       "Authorization": "Bearer " + token
     },
     body: JSON.stringify({ 
-      name: name,
-      creatorId: currentUserId
+      name: name
+      // creatorId: currentUserId
     })
   });
 

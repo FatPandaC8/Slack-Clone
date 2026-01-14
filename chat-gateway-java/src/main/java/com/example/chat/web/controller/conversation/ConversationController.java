@@ -16,6 +16,8 @@ import com.example.chat.web.dto.CreateConversationHttpRequest;
 import com.example.chat.web.dto.CreateConversationResponseView;
 import com.example.chat.web.dto.JoinConversationHttpRequest;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/conversations")
 public class ConversationController {
@@ -29,10 +31,12 @@ public class ConversationController {
     @ResponseStatus(HttpStatus.CREATED)
     public CreateConversationResponseView create(
         @RequestBody CreateConversationHttpRequest req,
-        @RequestHeader("Authorization") String authHeader
+        @RequestHeader("Authorization") String authHeader,
+        HttpServletRequest httpRequest
     ) {
-        String token = authHeader.replace("Bearer", "");
-        return grpcClient.createConversation(token, req.name(), req.creatorId());
+        String creatorId = (String) httpRequest.getAttribute("userId");
+        String token = authHeader.replace("Bearer ", ""); 
+        return grpcClient.createConversation(token, req.name(), creatorId);
     }
 
     @PostMapping("/join")
@@ -41,7 +45,7 @@ public class ConversationController {
         @RequestBody JoinConversationHttpRequest req,
         @RequestHeader("Authorization") String authHeader
     ) {
-        String token = authHeader.replace("Bearer", "");
+        String token = authHeader.replace("Bearer ", "");
         grpcClient.joinConversation(token, req.inviteCode(), req.userId());
     }
 
@@ -50,7 +54,7 @@ public class ConversationController {
         @PathVariable String conversationId,
         @RequestHeader("Authorization") String authHeader
     ) {
-        String token = authHeader.replace("Bearer", "");
+        String token = authHeader.replace("Bearer ", "");
         return grpcClient.getConversation(token, conversationId);
     }
 }
