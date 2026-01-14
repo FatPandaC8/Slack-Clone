@@ -3,6 +3,7 @@ import { initTypingIndicator } from "./message/typing-indicator.js";
 import { joinConversation } from "./conversation/joinConversation.js";
 import { sendTyping } from "./message/typing-sender.js";
 import { send } from "./message/send.js";
+import { logoutFunc } from "./auth/auth.js";
 
 // Grab inputs once
 const convNameInput         = document.getElementById("createConvInput");
@@ -38,3 +39,5 @@ textInput.addEventListener("input",     () => {
 textInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") send(textInput);
 });
+
+logoutBtn.addEventListener("click", () => logoutFunc())
