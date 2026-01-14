@@ -48,3 +48,6 @@ BUGS: cannot see the new messages
 
 ## (13/01/2026)               
 [Security - JWT]              Can validate each time directly in Go handlers 
+
+## (14/01/2026)
+[Logic - Javascript]          Real time auto reload with loadMyConversation

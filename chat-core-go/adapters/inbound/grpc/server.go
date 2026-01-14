@@ -203,8 +203,8 @@ func (s *Server) GetConversation(
 		res.Messages = append(res.Messages, &chatpb.ChatMessage{
 			MessageId: msg.ID,
 			SenderId:  msg.SenderID,
-			Text:      msg.Content,
-			Name: 	msg.Name,	
+			Text:      msg.Text,
+			Name: 	msg.SenderName,	
 			CreatedAt: msg.CreatedAt,
 		})
 	}

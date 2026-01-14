@@ -15,16 +15,16 @@ export async function loadConversation(conversationId) {
   box.innerHTML = "";
   
   data.messages.forEach(m => {
-    box.appendChild(renderMessage(m.senderId, m.text));
+    box.appendChild(renderMessage(m.name, m.text));
   });
   
   // Update the global
   setCurrentConversationId(conversationId);
 }
 
-export function renderMessage(senderId, text) {
+export function renderMessage(name, text) {
   const div = document.createElement("div");
   div.classList.add("msg");
-  div.innerText = `${senderId}: ${text}`;
+  div.innerText = `${name}: ${text}`;
   return div;
 }

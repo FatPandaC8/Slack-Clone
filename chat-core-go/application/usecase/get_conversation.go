@@ -40,8 +40,8 @@ func (uc *GetConversation) Execute(id string) (*dto.GetConversationDTO, error) {
 		messages = append(messages, dto.MessageDTO{
 			ID: msg.ID(),
 			SenderID:  msg.Sender(),
-			Content:   msg.Content().Value(),
-			Name: user.Name(),
+			SenderName: user.Name(),
+			Text:   msg.Content().Value(),
 			CreatedAt: msg.CreatedAt().Format(time.RFC3339),
 		})
 	}

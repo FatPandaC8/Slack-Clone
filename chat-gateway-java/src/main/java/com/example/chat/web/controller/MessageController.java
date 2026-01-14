@@ -49,6 +49,7 @@ public class MessageController {
             new MessageView(
                 req.messageId(),
                 senderId,
+                req.name(),
                 req.text()
             )
         );

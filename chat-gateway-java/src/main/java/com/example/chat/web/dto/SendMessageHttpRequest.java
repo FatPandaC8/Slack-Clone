@@ -2,5 +2,6 @@ package com.example.chat.web.dto;
 
 public record SendMessageHttpRequest(
     String messageId,
+    String name,
     String text
 ) {}
