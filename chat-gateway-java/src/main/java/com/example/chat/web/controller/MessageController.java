@@ -12,6 +12,8 @@ import com.example.chat.application.SendMessageService;
 import com.example.chat.infra.grpc.MessageView;
 import com.example.chat.web.dto.SendMessageHttpRequest;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/conversations/{conversationId}/messages")
 public class MessageController {
@@ -30,19 +32,25 @@ public class MessageController {
     public void send(
         @PathVariable String conversationId,
         @RequestBody SendMessageHttpRequest req,
-        @RequestHeader("Authorization") String authHeader
+        @RequestHeader("Authorization") String authHeader,
+        HttpServletRequest httpRequest
     ) {
-        String token = authHeader.replace("Bearer", "");
+        String token = authHeader.replace("Bearer ", "");
+        String senderId = (String) httpRequest.getAttribute("userId");
         sendMessageService.send(
             token,
             conversationId,
-            req.senderId(),
+            senderId,
             req.text()
         );
 
         ws.convertAndSend(
             "/topic/conversations/" + conversationId,
-            new MessageView(conversationId, req.senderId(), req.text(), req.name())
+            new MessageView(
+                req.messageId(),
+                senderId,
+                req.text()
+            )
         );
     }
 }

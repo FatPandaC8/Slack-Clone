@@ -1,5 +1,5 @@
 import { getToken } from "../auth/auth.js";
-import {currentConversationId, currentUserId} from "../creation/creation.js"
+import { currentConversationId, currentUserId } from "../creation/creation.js"
 
 export async function send(textInput) {
   if (!currentConversationId) return alert("create a conversation first");

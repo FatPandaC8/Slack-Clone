@@ -1,6 +1,6 @@
 import { getToken } from "../auth/auth.js";
 import { setCurrentConversationId } from "../creation/creation.js";
-import { subscribeConversation, subscribeTyping } from "../websocket/websocket.js";
+import { connectWS, subscribeConversation, subscribeTyping } from "../websocket/websocket.js";
 import { loadConversation } from "./loadConversation.js";
 
 export async function loadMyConversations() {
@@ -20,9 +20,10 @@ export async function loadMyConversations() {
   convs.forEach(conv => {
     const btn = document.createElement("button");
     btn.innerText = conv.name;
-    btn.onclick = () => {
+    btn.onclick = async () => {
       setCurrentConversationId(conv.id);
       loadConversation(conv.id);
+      await connectWS();
       subscribeTyping(conv.id);
       subscribeConversation(conv.id);
     };

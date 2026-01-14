@@ -105,7 +105,6 @@ public class ChatGrpcClient {
                                                 m -> new MessageView(
                                                 m.getMessageId(),
                                                 m.getSenderId(),
-                                                m.getName(),
                                                 m.getText()
                                             ))
                                             .collect(Collectors.toList());
