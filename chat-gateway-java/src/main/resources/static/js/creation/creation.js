@@ -1,34 +1,13 @@
+import { getToken } from "../auth/auth.js";
 import { loadConversation } from "../conversation/loadConversation.js";
 import { loadMyConversations } from "../conversation/loadMyConversation.js";
-import { connectWS } from "../websocket/websocket.js";
 
 export let currentUserId = null;
 export let currentConversationId = null;
 
-function setCurrentUser(user) {
-  localStorage.setItem("currentUser", JSON.stringify(user));
-}
-
-export async function createUser(name, email, password) {
-  const payload = {name, email, password};
-
-  const res = await fetch("/users", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-
-  const data = await res.json();
-
-  setCurrentUser(data);
-  currentUserId = data.id;
-  await connectWS();
-  return data;
-}
-
 export async function createConversation(convNameInput) {
   const name = convNameInput.value.trim();
-
+  const token = getToken();
   if (!name) {
     alert("Conversation name required");
     return;
@@ -36,7 +15,10 @@ export async function createConversation(convNameInput) {
 
   const res = await fetch("/conversations", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
     body: JSON.stringify({ 
       name: name,
       creatorId: currentUserId

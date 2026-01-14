@@ -1,9 +1,14 @@
+import { getToken } from "../auth/auth.js";
 import { setCurrentConversationId } from "../creation/creation.js";
 
 export async function loadConversation(conversationId) {
   if (!conversationId) return;
-  
-  const res = await fetch(`/conversations/${conversationId}`);
+  const token = getToken();
+  const res = await fetch(`/conversations/${conversationId}`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  });
   const data = await res.json();
   
   const box = document.getElementById("messages");

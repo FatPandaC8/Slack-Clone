@@ -1,15 +1,22 @@
+import { getToken } from "../auth/auth.js";
 import { loadMyConversations } from "./loadMyConversation.js";
 
-function getCurrentUser() {
+export function getCurrentUser() {
     return JSON.parse(localStorage.getItem("currentUser"));
 }
 
 export async function joinConversation(inviteCode) {
   const invite = inviteCode.trim();
   const user = getCurrentUser();
+  const token = getToken();
 
   if (!user) {
     alert("Please create/login user first.");
+    return;
+  }
+
+  if (!token) {
+    alert("No token found. Please log in again.");
     return;
   }
 
@@ -20,7 +27,10 @@ export async function joinConversation(inviteCode) {
 
   const res = await fetch("/conversations/join", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
     body: JSON.stringify({
       inviteCode: invite,
       userId: user.id

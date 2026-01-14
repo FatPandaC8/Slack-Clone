@@ -3,6 +3,7 @@ package grpcadapter
 import (
 	"chat-core-go/adapters/outbound/jwtadapter"
 	"context"
+	"strings"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -21,6 +22,11 @@ func AuthInterceptor(jwtService *jwtadapter.JWTService) grpc.UnaryServerIntercep
         info *grpc.UnaryServerInfo,
         handler grpc.UnaryHandler,
     ) (interface{}, error) {
+        method := info.FullMethod
+
+        if strings.Contains(method, "Register") || strings.Contains(method, "Login") {
+            return handler(ctx, req)
+        }
 
         md, ok := metadata.FromIncomingContext(ctx)
         if !ok {

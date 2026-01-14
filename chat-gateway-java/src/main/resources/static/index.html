@@ -9,12 +9,11 @@
 <body>
 <div class="app">
   <aside class="sidebar">
-    <h3>Create User</h3>
+    <h3>User</h3>
 
-    <input id="name" placeholder="name">
-    <input id="email" placeholder="email">
-    <input id="password" placeholder="password" type="password">
-    <button id="createUserBtn">Create User</button>
+    <div id="userInfo">
+
+    </div>
 
     <h3>Conversation</h3> 
     <div id="conversationList" class="conversation-list"></div>
@@ -68,8 +67,14 @@
   </main>
 </div>
 
+<script>
+  if (!localStorage.getItem("token")) {
+    window.location.href = "auth.html";
+  }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 <script type="module" src="/js/main.js"></script>
+<script type="module" src="./js/auth/user.js"></script>
 </body>
 </html>

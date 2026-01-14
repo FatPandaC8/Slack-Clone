@@ -203,6 +203,10 @@ public class ChatGrpcClient {
                 CallOptions callOptions,
                 Channel next
             ) {
+                String full = method.getFullMethodName();
+                if (full.contains("LoginUser") || full.contains("RegisterUser")) {
+                    return next.newCall(method, callOptions);
+                }
                 return new ForwardingClientCall.SimpleForwardingClientCall<>(
                     next.newCall(method, callOptions)
                 ) {
