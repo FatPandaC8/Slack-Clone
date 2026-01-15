@@ -1,20 +1,36 @@
 package dto
 
-type GetConversationDTO struct {
-	ID       string
-	Members  []UserDTO
-	Messages []MessageDTO
+import (
+	"chat-core-go/domain/identity"
+	"chat-core-go/domain/valueobject"
+	"time"
+)
+
+// GetConversationQuery contains input for the query
+type GetConversationQuery struct {
+	Principal      *identity.Principal
+	ConversationID valueobject.ConversationID
 }
 
+// GetConversationResult contains the conversation details
+type GetConversationResult struct {
+	ConversationID valueobject.ConversationID
+	Name           valueobject.ConversationName
+	Members        []MemberDTO
+	Messages       []MessageDTO
+}
+
+// MemberDTO represents a conversation member
+type MemberDTO struct {
+	UserID valueobject.UserID
+	Name   valueobject.UserName
+}
+
+// MessageDTO represents a message
 type MessageDTO struct {
-    ID         string `json:"id"`
-    SenderID   string `json:"senderId"`
-    SenderName string `json:"senderName,omitempty"`
-    Text       string `json:"text"`
-    CreatedAt  string `json:"createdAt"`
-}
-
-type UserDTO struct {
-	ID   string
-	Name string
+	MessageID  valueobject.MessageID
+	SenderID   valueobject.UserID
+	SenderName valueobject.UserName
+	Content    valueobject.MessageContent
+	CreatedAt  time.Time
 }

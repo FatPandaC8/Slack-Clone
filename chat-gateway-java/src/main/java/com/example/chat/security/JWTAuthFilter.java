@@ -27,6 +27,7 @@ public class JWTAuthFilter implements Filter {
     ) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         String header = request.getHeader("Authorization");
+        
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7).trim();
             try {

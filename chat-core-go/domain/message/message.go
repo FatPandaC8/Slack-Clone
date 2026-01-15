@@ -1,33 +1,77 @@
 package message
 
 import (
+	"chat-core-go/domain/valueobject"
 	"time"
 )
 
+// Message is an ENTITY
 type Message struct {
-	id 				string
-	sender 			string
-	conversationID	string
-	content 		Content
-	createdAt 		time.Time
+	id             valueobject.MessageID
+	sender         valueobject.UserID
+	conversationID valueobject.ConversationID
+	content        valueobject.MessageContent
+	createdAt      time.Time
 }
 
+// NewMessage creates a new message (factory method)
 func NewMessage(
-	id string,
-	sender string,
-	conversationID string,
-	content Content,
-) Message {
-	return Message{
+	id valueobject.MessageID,
+	sender valueobject.UserID,
+	conversationID valueobject.ConversationID,
+	content valueobject.MessageContent,
+) *Message {
+	return &Message{
 		id:             id,
 		sender:         sender,
 		conversationID: conversationID,
 		content:        content,
+		createdAt:      time.Now(),
 	}
 }
 
-func (m Message) ID() string                { return m.id }
-func (m Message) Sender() string       		{ return m.sender }
-func (m Message) ConversationID() string 	{ return m.conversationID }
-func (m Message) Content() Content      	{ return m.content }
-func (m Message) CreatedAt() time.Time 		{ return m.createdAt }
+// ReconstructMessage recreates a message from persistence
+func ReconstructMessage(
+	id valueobject.MessageID,
+	sender valueobject.UserID,
+	conversationID valueobject.ConversationID,
+	content valueobject.MessageContent,
+	createdAt time.Time,
+) *Message {
+	return &Message{
+		id:             id,
+		sender:         sender,
+		conversationID: conversationID,
+		content:        content,
+		createdAt:      createdAt,
+	}
+}
+
+// Getters
+func (m *Message) ID() valueobject.MessageID {
+	return m.id
+}
+
+func (m *Message) Sender() valueobject.UserID {
+	return m.sender
+}
+
+func (m *Message) ConversationID() valueobject.ConversationID {
+	return m.conversationID
+}
+
+func (m *Message) Content() valueobject.MessageContent {
+	return m.content
+}
+
+func (m *Message) CreatedAt() time.Time {
+	return m.createdAt
+}
+
+// Equals checks if two messages are the same
+func (m *Message) Equals(other *Message) bool {
+	if other == nil {
+		return false
+	}
+	return m.id.Equals(other.id)
+}

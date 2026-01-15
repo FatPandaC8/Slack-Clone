@@ -1,55 +1,90 @@
 package config
 
 import (
-	"chat-core-go/adapters/outbound/bcryptadapter"
-	"chat-core-go/adapters/outbound/jwtadapter"
+	"chat-core-go/adapters/outbound/auth"
 	"chat-core-go/adapters/outbound/persistent/inmemory"
-	"chat-core-go/adapters/outbound/publisher"
 	"chat-core-go/application/usecase"
+	"chat-core-go/ports/out"
+	"chat-core-go/ports/service"
 )
 
-var conversationRepo = persistent.NewInMemoryConversationRepo()
-var messageRepo = persistent.NewInMemoryMessageRepo()
-var userRepo = persistent.NewInmemoryUserRepo()
-var passwordHasher = bcryptadapter.New()
-var TokenJWT = jwtadapter.NewJWTService("xsaeslrtjtupzegqbzkuohkotelteuxvqlnmwrhonlrvhyvfterihobznadpjttf") // for production, put it in env variables
-
-func WireSendMessage() *usecase.SendMessage {
-	pub := &publisher.LogPublisher{}
-	return usecase.NewSendMessage(conversationRepo, messageRepo, pub)
+type Container struct {
+	// Repositories
+	UserRepo         out.UserRepository
+	ConversationRepo out.ConversationRepository
+	MessageRepo      out.MessageRepository
+	
+	// Services
+	Authenticator service.Authenticator
+	TokenIssuer   service.TokenIssuer
+	PasswordHasher service.PasswordHasher
+	
+	// Use cases
+	SendMessage        *usecase.SendMessage
+	CreateConversation *usecase.CreateConversation
+	GetConversation    *usecase.GetConversation
+	JoinConversation   *usecase.JoinConversation
+	RegisterUser       *usecase.RegisterUser
+	LoginUser          *usecase.LoginUser
 }
 
-func WireCreateConversation() *usecase.CreateConversation {
-	return usecase.NewCreateConversation(conversationRepo)
-}
-
-func WireGetConversation() *usecase.GetConversation {
-	return usecase.NewGetConversation(conversationRepo, messageRepo, userRepo)
-}
-
-func WireListConversations() *usecase.ListConversations {
-	return usecase.NewListConversations(conversationRepo)
-}
-
-func WireListUsers() *usecase.ListUsers {
-	return usecase.NewListUsers(userRepo)
-}
-
-func WireJoinConversation() *usecase.JoinConversation {
-	return usecase.NewJoinConversation(conversationRepo)
-}
-
-func WireRegisterUser() *usecase.RegisterUser {
-	return usecase.NewRegisterUser(
+// NewContainer initializes all dependencies
+func NewContainer() *Container {
+	// Initialize repositories (adapters)
+	userRepo := persistent.NewUserRepository()
+	conversationRepo := persistent.NewConversationRepository()
+	messageRepo := persistent.NewMessageRepository()
+	
+	// Initialize services (adapters)
+	jwtSecret := "xsaeslrtjtupzegqbzkuohkotelteuxvqlnmwrhonlrvhyvfterihobznadpjttf"
+	jwtAuth := auth.NewJWTAuthenticator(jwtSecret)
+	bcryptHasher := auth.NewBcryptHasher()
+	
+	// Initialize use cases (application layer)
+	sendMessage := usecase.NewSendMessage(
+		conversationRepo,
+		messageRepo,
 		userRepo,
-		passwordHasher,
 	)
-}
-
-func WireLoginUser() *usecase.LoginUser {
-	return usecase.NewLoginUser(
+	
+	createConversation := usecase.NewCreateConversation(
+		conversationRepo,
+	)
+	
+	getConversation := usecase.NewGetConversation(
+		conversationRepo,
+		messageRepo,
 		userRepo,
-		passwordHasher,
-		TokenJWT,
 	)
+	
+	joinConversation := usecase.NewJoinConversation(
+		conversationRepo,
+		userRepo,
+	)
+	
+	registerUser := usecase.NewRegisterUser(
+		userRepo,
+		bcryptHasher,
+	)
+	
+	loginUser := usecase.NewLoginUser(
+		userRepo,
+		bcryptHasher,
+		jwtAuth, // TokenIssuer interface
+	)
+	
+	return &Container{
+		UserRepo:         userRepo,
+		ConversationRepo: conversationRepo,
+		MessageRepo:      messageRepo,
+		Authenticator:    jwtAuth,
+		TokenIssuer:      jwtAuth,
+		PasswordHasher:   bcryptHasher,
+		SendMessage:        sendMessage,
+		CreateConversation: createConversation,
+		GetConversation:    getConversation,
+		JoinConversation:   joinConversation,
+		RegisterUser:       registerUser,
+		LoginUser:          loginUser,
+	}
 }

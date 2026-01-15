@@ -1,3 +1,4 @@
+// main.go
 package main
 
 import (
@@ -12,41 +13,39 @@ import (
 )
 
 func main() {
-	sendMessageUC := config.WireSendMessage()
-	createConversationUC := config.WireCreateConversation()
-	getConversationUC := config.WireGetConversation()
-	listConversationsUC := config.WireListConversations()
-	listUserUC := config.WireListUsers()
-	joinConversationUC := config.WireJoinConversation()
-	registerUserUC := config.WireRegisterUser()
-	loginUserUC := config.WireLoginUser()
-
+	// Initialize dependency container
+	container := config.NewContainer()
+	
+	// Create gRPC server with auth interceptor
 	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(grpcadapter.AuthInterceptor(config.TokenJWT)),
+		grpc.UnaryInterceptor(
+			grpcadapter.AuthInterceptor(container.Authenticator),
+		),
 	)
-
+	
+	// Create gRPC service implementation
 	chatServer := grpcadapter.NewServer(
-		sendMessageUC,
-		createConversationUC,
-		getConversationUC,
-		listConversationsUC,
-		listUserUC,
-		joinConversationUC,
-		registerUserUC, 
-		loginUserUC,
+		container.SendMessage,
+		container.CreateConversation,
+		container.GetConversation,
+		container.JoinConversation,
+		container.RegisterUser,
+		container.LoginUser,
 	)
-
+	
+	// Register service
 	chatpb.RegisterChatServiceServer(grpcServer, chatServer)
-
+	
+	// Start listening
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to listen: %v", err)
 	}
-
-	log.Println("chat-core-go gRPC running on :50051")
-
-	// 5. Start server (blocking)
+	
+	log.Println(" Chat Core Service (Go) running on :50051")
+	
+	// Start server (blocking)
 	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to serve: %v", err)
 	}
 }

@@ -1,12 +1,16 @@
+// application/usecase/create_conversation.go
 package usecase
 
 import (
 	"chat-core-go/application/dto"
 	"chat-core-go/domain/conversation"
+	"chat-core-go/domain/valueobject"
 	"chat-core-go/ports/out"
+	"errors"
 	"math/rand"
 )
 
+// CreateConversation is a use case for creating conversations
 type CreateConversation struct {
 	conversations out.ConversationRepository
 }
@@ -14,40 +18,56 @@ type CreateConversation struct {
 func NewCreateConversation(
 	conversations out.ConversationRepository,
 ) *CreateConversation {
-	return &CreateConversation{conversations: conversations}
+	return &CreateConversation{
+		conversations: conversations,
+	}
 }
 
-func (uc *CreateConversation) Execute(cmd dto.CreateConversationCommand) (*dto.CreateConversationDTO, error) {
-	id := uc.conversations.GenerateID()
-	invite := generateInviteCode()
-
+// Execute performs the create conversation use case
+func (uc *CreateConversation) Execute(cmd dto.CreateConversationCommand) (*dto.CreateConversationResult, error) {
+	// 1. Validate principal
+	if cmd.Principal == nil {
+		return nil, errors.New("principal is required")
+	}
+	if cmd.Principal.IsExpired() {
+		return nil, errors.New("principal expired")
+	}
+	
+	// 2. Generate IDs
+	conversationID := uc.conversations.GenerateID()
+	inviteCode := generateInviteCode()
+	
+	// 3. Create conversation aggregate
 	conv, err := conversation.NewConversation(
-		id, 
+		conversationID,
 		cmd.Name,
-		invite,
-		cmd.CreatorID,
+		inviteCode,
+		cmd.Principal.UserID(),
 	)
 	if err != nil {
 		return nil, err
 	}
-
-	save_err := uc.conversations.Save(conv)
-	if save_err != nil {
-		return nil, save_err
+	
+	// 4. Persist
+	err = uc.conversations.Save(conv)
+	if err != nil {
+		return nil, err
 	}
-
-	return &dto.CreateConversationDTO{
-		ID: id,
-		InviteCode: invite,
-		Name: cmd.Name,
+	
+	// 5. Return result
+	return &dto.CreateConversationResult{
+		ConversationID: conversationID,
+		Name:           cmd.Name,
+		InviteCode:     inviteCode,
 	}, nil
 }
 
-func generateInviteCode() string { // random 6 char invite code (later generate by database index through base62 or base64)
-    letters := "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-    b := make([]byte, 6)
-    for i := range b {
-        b[i] = letters[rand.Intn(len(letters))]
-    }
-    return string(b)
+// generateInviteCode creates a random 6-character invite code
+func generateInviteCode() valueobject.InviteCode {
+	const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+	b := make([]byte, 6)
+	for i := range b {
+		b[i] = chars[rand.Intn(len(chars))]
+	}
+	return valueobject.MustInviteCode(string(b))
 }

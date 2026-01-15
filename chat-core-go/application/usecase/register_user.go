@@ -1,3 +1,4 @@
+// application/usecase/register_user.go
 package usecase
 
 import (
@@ -8,39 +9,72 @@ import (
 	"errors"
 )
 
+// RegisterUser is a use case for registering new users
 type RegisterUser struct {
-	users   out.UserRepository
-	hasher  service.PasswordHasher
+	users  out.UserRepository
+	hasher service.PasswordHasher
 }
 
-func NewRegisterUser(users out.UserRepository, hasher service.PasswordHasher) *RegisterUser {
-	return &RegisterUser{users, hasher}
+func NewRegisterUser(
+	users out.UserRepository,
+	hasher service.PasswordHasher,
+) *RegisterUser {
+	return &RegisterUser{
+		users:  users,
+		hasher: hasher,
+	}
 }
 
-func (uc *RegisterUser) Execute(cmd dto.RegisterUserCommand) (*dto.UserDTO, error) {
+// Execute performs the register user use case
+func (uc *RegisterUser) Execute(cmd dto.RegisterUserCommand) (*dto.RegisterUserResult, error) {
+	// 1. Validate input
+	if cmd.Name.IsEmpty() {
+		return nil, errors.New("name is required")
+	}
+	if cmd.Email.IsEmpty() {
+		return nil, errors.New("email is required")
+	}
+	if cmd.Password == "" {
+		return nil, errors.New("password is required")
+	}
+	if len(cmd.Password) < 8 {
+		return nil, errors.New("password must be at least 8 characters")
+	}
+	
+	// 2. Check if email already exists
 	existing, _ := uc.users.LoadByEmail(cmd.Email)
 	if existing != nil {
 		return nil, errors.New("email already registered")
 	}
-
-	hash, err := uc.hasher.Hash(cmd.Password)
+	
+	// 3. Hash password
+	passwordHash, err := uc.hasher.Hash(cmd.Password)
+	if err != nil {
+		return nil, errors.New("failed to hash password")
+	}
+	
+	// 4. Create user entity
+	userID := uc.users.GenerateID()
+	newUser, err := user.NewUser(
+		userID,
+		cmd.Name,
+		cmd.Email,
+		passwordHash,
+	)
 	if err != nil {
 		return nil, err
 	}
-
-	id := uc.users.GenerateID()
-	u, err := user.NewUser(id, cmd.Name, cmd.Email, hash)
+	
+	// 5. Persist
+	err = uc.users.Save(newUser)
 	if err != nil {
 		return nil, err
 	}
-
-	err = uc.users.Save(u)
-	if err != nil {
-		return nil, err
-	}
-
-	return &dto.UserDTO{
-		ID: u.ID(),
-		Name: u.Name(),
+	
+	// 6. Return result
+	return &dto.RegisterUserResult{
+		UserID: userID,
+		Name:   cmd.Name,
+		Email:  cmd.Email,
 	}, nil
 }

@@ -1,13 +1,12 @@
 package dto
 
 import (
-	"time"
+	"chat-core-go/domain/identity"
+	"chat-core-go/domain/valueobject"
 )
 
 type SendMessageCommand struct {
-	MessageID 		string
-	ConversationID 	string
-	SenderID 		string
-	Text 			string
-	CreatedAt 		time.Time
+	Principal      *identity.Principal
+	ConversationID valueobject.ConversationID
+	Content        valueobject.MessageContent
 }

@@ -1,18 +1,18 @@
 package dto
 
 import (
-	"time"
+	"chat-core-go/domain/identity"
+	"chat-core-go/domain/valueobject"
 )
 
 // DTOs are for changing state, write; queries on the other hand does not need DTO
 type CreateConversationCommand struct {
-	Name 				string
-	CreatorID 			string
-	CreatedAt 			time.Time
+	Principal *identity.Principal
+	Name      valueobject.ConversationName
 }
 
-type CreateConversationDTO struct {
-	ID 					string
-	InviteCode 			string
-	Name 				string
+type CreateConversationResult struct {
+	ConversationID valueobject.ConversationID
+	Name           valueobject.ConversationName
+	InviteCode     valueobject.InviteCode
 }
