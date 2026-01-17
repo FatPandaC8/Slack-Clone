@@ -1,0 +1,2 @@
+grpcurl -plaintext -d '{"userID": "1", "name":"General"}' localhost:50051 chat.ChatService/CreateRoom
+grpcurl -plaintext -d '{"userID": "2", "invite_code": "7092787b"}' localhost:50051 chat.ChatService/JoinRoom
