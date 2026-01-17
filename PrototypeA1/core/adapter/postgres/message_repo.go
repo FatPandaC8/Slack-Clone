@@ -18,7 +18,7 @@ func NewMessageRepository(db *sql.DB) *MessageRepository {
 
 func (r *MessageRepository) Save(msg *message.Message) error {
 	_, err := r.db.Exec(
-		`INSERT INTO messages (id, room_id, sender_id, content, created_at)
+		`INSERT INTO messages (id, roomid, senderid, content, createdat)
 		 VALUES ($1, $2, $3, $4, $5)`,
 		msg.ID(), msg.RoomID(), msg.SenderID(), msg.Content(), time.Now(),
 	)
@@ -27,10 +27,10 @@ func (r *MessageRepository) Save(msg *message.Message) error {
 
 func (r *MessageRepository) FindByRoom(roomID string) ([]*message.Message, error) {
 	rows, err := r.db.Query(
-		`SELECT id, room_id, sender_id, content, created_at
+		`SELECT id, roomid, senderid, content, createdat
 		 FROM messages
-		 WHERE room_id = $1
-		 ORDER BY created_at ASC`,
+		 WHERE roomid = $1
+		 ORDER BY createdat ASC`,
 		roomID,
 	)
 	if err != nil {

@@ -26,7 +26,7 @@ func Load() Config {
 			Host:     env("PG_HOST", "localhost"),
 			Port:     env("PG_PORT", "5432"),
 			User:     env("PG_USER", "postgres"),
-			Password: env("PG_PASSWORD", ""),
+			Password: env("PG_PASSWORD", "postgres"),
 			DBName:   env("PG_DB", "postgres"),
 			SSLMode:  env("PG_SSLMODE", "disable"),
 		},

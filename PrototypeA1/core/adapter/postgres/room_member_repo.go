@@ -16,7 +16,7 @@ func (r *RoomMemberRepository) IsMember(roomID, userID string) (bool, error) {
 	var exists bool
 	err := r.db.QueryRow(
 		`SELECT EXISTS (
-			SELECT 1 FROM room_members WHERE room_id=$1 AND user_id=$2
+			SELECT 1 FROM room_members WHERE roomid=$1 AND userid=$2
 		)`,
 		roomID, userID,
 	).Scan(&exists)
@@ -26,7 +26,7 @@ func (r *RoomMemberRepository) IsMember(roomID, userID string) (bool, error) {
 
 func (r *RoomMemberRepository) AddMember(roomID, userID string, role string) error {
 	_, err := r.db.Exec(
-		`INSERT INTO room_members (room_id, user_id, role, joined_at)
+		`INSERT INTO room_members (roomid, userid, role, joined_at)
 		 VALUES ($1, $2, $3, NOW())`,
 		roomID, userID, role,
 	)

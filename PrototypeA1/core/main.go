@@ -8,6 +8,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -32,6 +33,7 @@ func main() {
 		app.ListMessage,
 	)
 	pb.RegisterChatServiceServer(grpcServer, chatServer)
+	reflection.Register(grpcServer)
 	
 	log.Println("gRPC server listening on", cfg.GRPC.Addr)
 	if err := grpcServer.Serve(lis); err != nil {

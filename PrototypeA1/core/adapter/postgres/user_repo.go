@@ -16,7 +16,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 
 func (r *UserRepository) FindByID(id string) (*user.User, error) {
 	row := r.db.QueryRow(
-		`SELECT id, name, email, created_at
+		`SELECT userid, name, email, createdat
 		 FROM users
 		 WHERE id = $1`,
 		id,
