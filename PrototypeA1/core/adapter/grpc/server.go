@@ -4,6 +4,7 @@ import (
 	"context"
 	pb "core/adapter/grpc/proto"
 	"core/application"
+	valueobject "core/domain/valueobject/user"
 	"core/port/in"
 	"time"
 
@@ -72,9 +73,13 @@ func (s *Server) SendMessage(
 	ctx context.Context,
 	req *pb.SendMessageRequest,
 ) (*pb.SendMessageResponse, error) {
+	userID, errr := valueobject.NewUserID(req.UserID)
+	if errr != nil {
+		return nil, errr
+	}
 
 	err := s.sendMessageUC.SendMessage(in.SendMessageCommand{
-		UserID:  req.UserID,
+		UserID:  userID,
 		RoomID:  req.RoomID,
 		Content: req.Content,
 	})

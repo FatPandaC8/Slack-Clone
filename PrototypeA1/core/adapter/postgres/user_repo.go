@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"core/domain/user"
+	valueobject "core/domain/valueobject/user"
 	"database/sql"
 	"time"
 )
@@ -14,22 +15,22 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) FindByID(id string) (*user.User, error) {
+func (r *UserRepository) FindByID(userID valueobject.UserID) (*user.User, error) {
 	row := r.db.QueryRow(
 		`SELECT userid, name, email, createdat
 		 FROM users
 		 WHERE id = $1`,
-		id,
+		userID.String(),
 	)
 
 	var (
-		userID    string
+		rawUserID    string
 		name      string
 		email     string
 		createdAt time.Time
 	)
 
-	if err := row.Scan(&userID, &name, &email, &createdAt); err != nil {
+	if err := row.Scan(&rawUserID, &name, &email, &createdAt); err != nil {
 		return nil, err
 	}
 

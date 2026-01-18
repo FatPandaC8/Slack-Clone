@@ -1,7 +1,10 @@
 package out
 
-import "core/domain/user"
+import (
+	"core/domain/user"
+	valueobject "core/domain/valueobject/user"
+)
 
 type UserRepository interface {
-	FindByID(userID string) (*user.User, error)
+	FindByID(userID valueobject.UserID) (*user.User, error)
 }

@@ -1,15 +1,18 @@
 package user
 
-import "time"
+import (
+	valueobject "core/domain/valueobject/user"
+	"time"
+)
 
 type User struct {
-	userID 	string
+	userID 	valueobject.UserID
 	name 	string
 	email 	string
 	createdAt time.Time
 }
 
-func NewUser(id, name, email string, createdAt time.Time) *User {
+func NewUser(id valueobject.UserID, name, email string, createdAt time.Time) *User {
 	return &User{
 		userID:        id,
 		name:      name,
@@ -19,7 +22,7 @@ func NewUser(id, name, email string, createdAt time.Time) *User {
 }
 
 func (u *User) ID() string {
-	return u.userID
+	return u.userID.String()
 }
 
 func (u *User) Name() string {

@@ -1,6 +1,7 @@
 package room
 
 import (
+	userVO "core/domain/valueobject/user"
 	"errors"
 	"time"
 )
@@ -9,19 +10,19 @@ var ErrAlreadyMember = errors.New("user already in room")
 var ErrNotAdmin = errors.New("only admin can perform this action")
 
 type Room struct {
-	roomID         string
+	roomID     string
 	name       string
 	inviteCode string
-	members    map[string]Member
+	members    map[userVO.UserID]Member
 	createdAt  time.Time
 }
 
-func NewRoom(id, name, inviteCode string, createdAt time.Time) *Room {
+func NewRoom(roomID string, name, inviteCode string, createdAt time.Time) *Room {
 	return &Room{
-		roomID:         id,
+		roomID:     roomID,
 		name:       name,
 		inviteCode: inviteCode,
-		members:    make(map[string]Member),
+		members:    make(map[userVO.UserID]Member),
 		createdAt:  createdAt,
 	}
 }
@@ -38,7 +39,11 @@ func (r *Room) InviteCode() string {
 	return r.inviteCode
 }
 
-func (r *Room) AddMember(userID string, role Role, joinedAt time.Time) error {
+func (r *Room) AddMember(
+	userID userVO.UserID,
+	role Role, 
+	joinedAt time.Time,
+) error {
 	if _, exists := r.members[userID]; exists {
 		return ErrAlreadyMember
 	}
@@ -47,12 +52,12 @@ func (r *Room) AddMember(userID string, role Role, joinedAt time.Time) error {
 	return nil
 }
 
-func (r *Room) IsMember(userID string) bool {
+func (r *Room) IsMember(userID userVO.UserID) bool {
 	_, ok := r.members[userID]
 	return ok
 }
 
-func (r *Room) IsAdmin(userID string) bool {
+func (r *Room) IsAdmin(userID userVO.UserID) bool {
 	m, ok := r.members[userID]
 	return ok && m.IsAdmin()
 }

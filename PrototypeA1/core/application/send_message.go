@@ -29,7 +29,7 @@ func NewSendMessageUseCase(
 }
 
 func (uc *SendMessageUseCase) SendMessage(cmd in.SendMessageCommand) error {
-	isMember, err := uc.roomMemberRepo.IsMember(cmd.RoomID, cmd.UserID)
+	isMember, err := uc.roomMemberRepo.IsMember(cmd.RoomID, cmd.UserID.String())
 	if err != nil {
 		return err
 	}

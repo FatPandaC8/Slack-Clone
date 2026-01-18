@@ -1,14 +1,17 @@
 package room
 
-import "time"
+import (
+	valueobject "core/domain/valueobject/user"
+	"time"
+)
 
 type Member struct {
-	userID 		string
+	userID 		valueobject.UserID
 	role 		Role
 	joinedAt 	time.Time
 }
 
-func NewMember(userID string, role Role, joinedAt time.Time) Member {
+func NewMember(userID valueobject.UserID, role Role, joinedAt time.Time) Member {
 	return Member{
 		userID:   userID,
 		role:     role,
@@ -17,7 +20,7 @@ func NewMember(userID string, role Role, joinedAt time.Time) Member {
 }
 
 func (m Member) UserID() string {
-	return m.userID
+	return m.userID.String()
 }
 
 func (m Member) Role() Role {

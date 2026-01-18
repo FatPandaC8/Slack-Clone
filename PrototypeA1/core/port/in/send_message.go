@@ -1,7 +1,9 @@
 package in
 
+import valueobject "core/domain/valueobject/user"
+
 type SendMessageCommand struct {
-	UserID  string
+	UserID  valueobject.UserID
 	RoomID  string
 	Content string
 }

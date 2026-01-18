@@ -1,17 +1,20 @@
 package message
 
-import "time"
+import (
+	valueobject "core/domain/valueobject/user"
+	"time"
+)
 
 type Message struct {
 	messageID 		string
 	roomID    string
-	senderID string
+	senderID valueobject.UserID
 	content   string
 	createdAt time.Time
 }
 
 
-func NewMessage(id, roomID, senderID, content string, createdAt time.Time) *Message {
+func NewMessage(id, roomID string, senderID valueobject.UserID, content string, createdAt time.Time) *Message {
 	return &Message{
 		messageID:        id,
 		roomID:    roomID,
@@ -30,7 +33,7 @@ func (m *Message) RoomID() string {
 }
 
 func (m *Message) SenderID() string {
-	return m.senderID
+	return m.senderID.String()
 }
 
 func (m *Message) Content() string {

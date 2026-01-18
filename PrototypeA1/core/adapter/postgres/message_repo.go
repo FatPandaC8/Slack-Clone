@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"core/domain/message"
+	valueobject "core/domain/valueobject/user"
 	"database/sql"
 	"time"
 )
@@ -53,8 +54,13 @@ func (r *MessageRepository) FindByRoom(roomID string) ([]*message.Message, error
 			return nil, err
 		}
 
+		sid, err := valueobject.NewUserID(senderID)
+		if err != nil {
+			return nil, err
+		}
+
 		messages = append(messages,
-			message.NewMessage(id, roomID, senderID, content, created),
+			message.NewMessage(id, roomID, sid, content, created),
 		)
 	}
 

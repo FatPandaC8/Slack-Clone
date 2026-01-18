@@ -14,3 +14,7 @@ func NewUserID(v string) (UserID, error) {
 		value: v,
 	}, nil
 }
+
+func (u UserID) String() string {
+	return u.value
+}
