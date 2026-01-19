@@ -25,9 +25,9 @@ func generateRefreshToken() string {
 
 func (r *RefreshTokenRepo) Save(userID string) (string, error) {
 	token := generateRefreshToken()
-	exp := time.Now().Add(7 * time.Minute)
+	exp := time.Now().Add(7 * 24 * time.Hour) // 7 days
 	_, err := r.db.Exec(
-		`INSERT INTO refresh_tokens (token, userid, expires_at)
+		`INSERT INTO refresh_tokens (token, userid, expireat)
 		VALUES ($1, $2, $3)`,
 		token, userID, exp,
 	)

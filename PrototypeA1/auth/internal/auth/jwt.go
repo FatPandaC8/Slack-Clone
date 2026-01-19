@@ -19,7 +19,7 @@ func (j *JWTService) CreateAccessToken(userID string) (string, error) {
 		Subject: userID,
 		Issuer: "auth-service",
 		IssuedAt: jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Second)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

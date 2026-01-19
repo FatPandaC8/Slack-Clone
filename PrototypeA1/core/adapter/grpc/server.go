@@ -2,6 +2,7 @@ package grpcadapter
 
 import (
 	"context"
+	"core/adapter/auth"
 	pb "core/adapter/grpc/proto"
 	"core/application"
 	valueobject "core/domain/valueobject/user"
@@ -39,8 +40,9 @@ func (s *Server) CreateRoom(
 	ctx context.Context,
 	req *pb.CreateRoomRequest,
 ) (*pb.CreateRoomResponse, error) {
+	uid := ctx.Value(auth.UserIDKey).(string)
 	res, err := s.createRoomUC.CreateRoom(in.CreateRoomCommand{
-		UserID: req.UserID,
+		UserID: uid,
 		Name: req.Name,
 	})
 	if err != nil {
@@ -57,9 +59,9 @@ func (s *Server) JoinRoom(
 	ctx context.Context,
 	req *pb.JoinRoomRequest,
 ) (*pb.JoinRoomResponse, error) {
-
+	uid := ctx.Value(auth.UserIDKey).(string)
 	err := s.joinRoomUC.JoinRoom(in.JoinRoomCommand{
-		UserID:     req.UserID,
+		UserID:     uid,
 		InviteCode: req.InviteCode,
 	})
 	if err != nil {
@@ -73,7 +75,10 @@ func (s *Server) SendMessage(
 	ctx context.Context,
 	req *pb.SendMessageRequest,
 ) (*pb.SendMessageResponse, error) {
-	userID, errr := valueobject.NewUserID(req.UserID)
+	uid := ctx.Value(auth.UserIDKey).(string)
+
+	userID, errr := valueobject.NewUserID(uid)
+
 	if errr != nil {
 		return nil, errr
 	}
@@ -94,9 +99,10 @@ func (s *Server) ListMessages(
 	ctx context.Context,
 	req *pb.ListMessagesRequest,
 ) (*pb.ListMessagesResponse, error) {
+	uid := ctx.Value(auth.UserIDKey).(string)
 
 	messages, err := s.listMessagesUC.ListMessages(in.ListMessagesQuery{
-		UserID: req.UserID,
+		UserID: uid,
 		RoomID: req.RoomID,
 	})
 	if err != nil {

@@ -5,6 +5,11 @@ import "os"
 type Config struct {
 	Postgres Postgres
 	GRPC     GRPC
+	JWT 	JWT
+}
+
+type JWT struct {
+	Secret 	string
 }
 
 type Postgres struct {
@@ -32,6 +37,9 @@ func Load() Config {
 		},
 		GRPC: GRPC{
 			Addr: env("GRPC_ADDR", ":50051"),
+		},
+		JWT: JWT{
+			Secret: env("JWT_KEY", "super-secret"),
 		},
 	}
 }

@@ -14,8 +14,7 @@ service ChatService {
 }
 
 message CreateRoomRequest {
-  string userID = 1;
-  string name = 2;
+  string name = 1;
 }
 
 message CreateRoomResponse {
@@ -24,23 +23,20 @@ message CreateRoomResponse {
 }
 
 message JoinRoomRequest {
-  string userID = 1;
-  string invite_code = 2;
+  string invite_code = 1;
 }
 
 message JoinRoomResponse {}
 
 message SendMessageRequest {
-  string userID = 1;
-  string roomID = 2;
-  string content = 3;
+  string roomID = 1;
+  string content = 2;
 }
 
 message SendMessageResponse {}
 
 message ListMessagesRequest {
-  string userID = 1;
-  string roomID = 2;
+  string roomID = 1;
 }
 
 message Message {

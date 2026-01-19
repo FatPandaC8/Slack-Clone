@@ -1,6 +1,7 @@
 package main
 
 import (
+	"core/adapter/auth"
 	grpcadapter "core/adapter/grpc"
 	pb "core/adapter/grpc/proto"
 	"core/config"
@@ -24,8 +25,12 @@ func main() {
 	if err != nil {
 		log.Fatal("failed to listen:", err)
 	}
-
-	grpcServer := grpc.NewServer()
+	verfier := auth.NewJWTVerifier(cfg.JWT.Secret)
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(
+			auth.UnaryAuthInterceptor(verfier),
+		),
+	)
 	chatServer := grpcadapter.NewServer(
 		app.CreateRoom,
 		app.JoinRoom,
